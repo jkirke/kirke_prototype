@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Map | IBM Bob Agent Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Sizes are in vw so the layout scales like the 2000px-wide screenshot */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #161616;
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4.75vw;
+      padding: 0 1.3vw 0 2vw;
+      background: #dadada;
+      font-size: 1.16vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    main {
+      position: relative;
+      min-height: 60vw;
+    }
+
+    .logo {
+      position: absolute;
+      left: 2vw;
+      top: 1.25vw;
+      width: 2.8vw;
+      height: 2.8vw;
+      display: block;
+    }
+
+    .copy {
+      position: absolute;
+      left: 5.6vw;
+      top: 0;
+      width: 26.3vw;
+    }
+
+    h1 {
+      position: absolute;
+      top: 4.3vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 2.32vw;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    h2 {
+      position: absolute;
+      top: 8.6vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 1.46vw;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #000000;
+    }
+    h2 .chev { display: inline-block; padding: 0.2vw 0.45vw; font-weight: 400; color: inherit; text-decoration: none; cursor: pointer; }
+    h2 .chev:hover { color: #2d5ff7; }
+    h2 .chev:focus-visible { outline: 0.15vw solid #000000; outline-offset: 0.05vw; }
+
+    .text {
+      position: absolute;
+      top: 11.1vw;
+      left: 0;
+      width: 100%;
+      font-size: 0.95vw;
+      line-height: 1.39vw;
+    }
+    .text p { margin-bottom: 1.39vw; }
+    .text p.lead { font-weight: 600; }
+
+    #diagram {
+      position: absolute;
+      left: 37.25vw;
+      top: 2.25vw;
+      width: 60.5vw;
+      height: 55.75vw;
+    }
+    #diagram text {
+      font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Katie Kirke</span>
+    <span>2026</span>
+  </header>
+
+  <main>
+    <a href="index.html" aria-label="Back to home">
+      <svg class="logo" viewBox="-70 -70 140 140" fill="none" stroke="#2f6bd0" stroke-width="7" aria-hidden="true">
+        <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+        <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+        <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+        <g fill="#ffffff">
+          <circle cx="0" cy="-57" r="9"/><circle cx="0" cy="57" r="9"/>
+          <circle cx="-57" cy="0" r="9"/><circle cx="57" cy="0" r="9"/>
+          <circle cx="-38" cy="-35" r="9"/><circle cx="38" cy="-35" r="9"/>
+          <circle cx="-38" cy="35" r="9"/><circle cx="38" cy="35" r="9"/>
+        </g>
+      </svg>
+    </a>
+
+    <div class="copy">
+      <h1>Research Methods</h1>
+      <h2><a class="chev" href="research5.html" aria-label="Previous page">&laquo;</a>Mind Map<a class="chev" href="index.html" aria-label="Next page">&raquo;</a></h2>
+
+      <div class="text" id="typed">
+        <p class="lead">Agentic AI Intervention: Management and Automation</p>
+        <p>Informed by the ecosystem, stakeholder, and journey mappings, this mind map highlights potential agentic AI intervention points. The senior software engineer’s (testing and security focal) current tasks are organized, broken down, and examined for opportunity.</p>
+      </div>
+    </div>
+
+    <svg id="diagram" viewBox="745 140 1210 1115" role="img" aria-label="Mind map with the senior software engineer at the centre, branching to Support, Planning and Testing tasks, with blue questions about where agents could help"></svg>
+  </main>
+
+  <script>
+    /* ---------- Mind map (coordinates are screenshot pixels) ---------- */
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("diagram");
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      }
+
+      /* centred multi-line text; each line is [text, bold] or just text */
+      function label(cx, cy, lines, size, italic, bold) {
+        var lh = size * 1.22;
+        var t = el("text", { "text-anchor": "middle", "font-size": size, fill: "#161616" });
+        if (italic) t.setAttribute("font-style", "italic");
+        lines.forEach(function (line, i) {
+          var s = el("tspan", { x: cx, y: cy + size * 0.36 + (i - (lines.length - 1) / 2) * lh }, t);
+          var isBold = bold === true || (bold === "first" && i === 0);
+          if (isBold) s.setAttribute("font-weight", "700");
+          s.textContent = line;
+        });
+      }
+
+      var GREEN  = { fill: "#c9f5d0", stroke: "#78dc90" };
+      var BLUE   = { fill: "#bfe6ff", stroke: "#5ab4f5" };
+      var PINK   = { fill: "#ffc0f2", stroke: "#f35fd6" };
+      var PURPLE = { fill: "#dccbff", stroke: "#8f5cf0" };
+
+      /* arrowhead */
+      var defs = el("defs", {});
+      var m = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: "9", refY: "5",
+        markerWidth: "6", markerHeight: "6", orient: "auto-start-reverse" }, defs);
+      el("path", { d: "M1 1L9 5L1 9", fill: "none", stroke: "#6d6d6d", "stroke-width": "1.2" }, m);
+
+      /* connectors (drawn first so the pills sit on top) */
+      [
+        /* Support branch, running upward */
+        "M1347 627V482", "M1347 434V381", "M1347 332V289", "M1347 240V197",
+        "M1160 357H1209",
+        /* from the centre to Planning and Testing */
+        "M1248 668H1046Q1036 668 1036 678V818",
+        "M1447 668H1638Q1648 668 1648 678V818",
+        /* Planning branch */
+        "M1036 911V866", "M1036 1002V959", "M1036 1093V1050",
+        "M908 935H937", "M908 1026H960", "M830 1002V959",
+        /* Testing branch */
+        "M1648 895V866", "M1648 970V943", "M1648 1045V1018", "M1648 1122V1093", "M1648 1199V1170",
+        "M1794 994H1726", "M1794 1069H1726", "M1794 1146H1726",
+        "M1870 1018V1045"
+      ].forEach(function (d) {
+        el("path", { d: d, fill: "none", stroke: "#6d6d6d", "stroke-width": "1", "marker-end": "url(#arr)" });
+      });
+
+      function pill(x1, y1, x2, y2, c, lines, size, italic, bold) {
+        el("rect", { x: x1, y: y1, width: x2 - x1, height: y2 - y1, rx: (y2 - y1) / 2 - 1, fill: c.fill, stroke: c.stroke, "stroke-width": "1.5" });
+        label((x1 + x2) / 2, (y1 + y2) / 2, lines, size, italic, bold);
+      }
+
+      /* centre */
+      el("rect", { x: 1248, y: 627, width: 199, height: 83, rx: 22, fill: PURPLE.fill, stroke: PURPLE.stroke, "stroke-width": "1.5" });
+      label(1347.5, 668.5, ["Agentic AI Intervention:", "The Senior Software Engineer"], 13.5, true, "first");
+
+      /* category pills */
+      pill(1271, 434, 1423, 482, PINK, ["Support"], 13, true, true);
+      pill(960, 818, 1112, 866, PINK, ["Planning"], 13, true, true);
+      pill(1572, 818, 1724, 866, PINK, ["Testing"], 13, true, true);
+
+      /* green tasks: support branch */
+      pill(1221, 148, 1474, 197, GREEN, ["Contributing to deployment run books"], 13);
+      pill(1248, 240, 1447, 289, GREEN, ["Operates as support engineer"], 13);
+      pill(1209, 332, 1486, 381, GREEN, ["Testing notifications for product retirement"], 13);
+
+      /* green tasks: planning branch */
+      pill(937, 911, 1135, 959, GREEN, ["Review Test Requirements"], 13);
+      pill(960, 1002, 1112, 1050, GREEN, ["Test plan creation"], 13);
+      pill(960, 1093, 1112, 1141, GREEN, ["Test bed setup"], 13);
+
+      /* green tasks: testing branch */
+      pill(1572, 895, 1724, 943, GREEN, ["Test execution"], 13);
+      pill(1572, 970, 1724, 1018, GREEN, ["Opening bugs"], 13);
+      pill(1572, 1045, 1724, 1093, GREEN, ["Verifying fixed bugs"], 13);
+      pill(1572, 1122, 1724, 1170, GREEN, ["Document test exit"], 13);
+      pill(1479, 1199, 1817, 1247, GREEN, ["Updates for security items and fixes require testing"], 13);
+
+      /* blue questions */
+      pill(1006, 332, 1158, 381, BLUE, ["Can agents help manage deployed", "software ?"], 7.6, true);
+      pill(754, 911, 906, 959, BLUE, ["Can agents help streamline the review and", "creation of test requirements ?"], 7.6, true);
+      pill(754, 1002, 906, 1050, BLUE, ["Can agents better facilitate communication", "between testers and developers ?"], 7.6, true);
+      pill(1794, 970, 1946, 1018, BLUE, ["Can opening bugs / describing bugs be", "automated with agentic assistance ?"], 7.6, true);
+      pill(1794, 1045, 1946, 1093, BLUE, ["Can agents monitor the status of bugs /", "issues ?"], 7.6, true);
+      pill(1794, 1122, 1946, 1170, BLUE, ["Can agents help testers by automatically", "populating documentation ?"], 7.6, true);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecosystem Mapping | IBM Bob Agent Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Sizes are in vw so the layout scales like the 1725px-wide screenshot */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #161616;
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4.65vw;
+      padding: 0 1.4vw 0 1.74vw;
+      background: #dadada;
+      font-size: 1.16vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    main {
+      position: relative;
+      min-height: 59.9vw;
+    }
+
+    .logo {
+      position: absolute;
+      left: 1.74vw;
+      top: 1.3vw;
+      width: 2.8vw;
+      height: 2.8vw;
+      display: block;
+    }
+
+    .copy {
+      position: absolute;
+      left: 5.45vw;
+      top: 0;
+      width: 26.3vw;
+    }
+
+    h1 {
+      position: absolute;
+      top: 4.3vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 2.32vw;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    h2 {
+      position: absolute;
+      top: 8.6vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 1.46vw;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #000000;
+    }
+    h2 .chev { display: inline-block; padding: 0.2vw 0.45vw; font-weight: 400; color: inherit; text-decoration: none; cursor: pointer; }
+    h2 .chev:hover { color: #2d5ff7; }
+    h2 .chev:focus-visible { outline: 0.15vw solid #000000; outline-offset: 0.05vw; }
+
+    .text {
+      position: absolute;
+      top: 11.1vw;
+      left: 0;
+      width: 100%;
+      font-size: 0.95vw;
+      line-height: 1.39vw;
+    }
+    .text p { margin-bottom: 1.39vw; }
+
+    #diagram {
+      position: absolute;
+      left: 41.3vw;
+      top: 1.45vw;
+      width: 56.8vw;
+      height: 56.8vw;
+    }
+    #diagram text {
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Katie Kirke</span>
+    <span>2026</span>
+  </header>
+
+  <main>
+    <a href="index.html" aria-label="Back to home">
+      <svg class="logo" viewBox="-70 -70 140 140" fill="none" stroke="#2f6bd0" stroke-width="7" aria-hidden="true">
+        <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+        <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+        <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+        <g fill="#ffffff">
+          <circle cx="0" cy="-57" r="9"/><circle cx="0" cy="57" r="9"/>
+          <circle cx="-57" cy="0" r="9"/><circle cx="57" cy="0" r="9"/>
+          <circle cx="-38" cy="-35" r="9"/><circle cx="38" cy="-35" r="9"/>
+          <circle cx="-38" cy="35" r="9"/><circle cx="38" cy="35" r="9"/>
+        </g>
+      </svg>
+    </a>
+
+    <div class="copy">
+      <h1>Research Methods</h1>
+      <h2><a class="chev" href="research1.html" aria-label="Previous page">&laquo;</a>Ecosystem Mapping<a class="chev" href="research3.html" aria-label="Next page">&raquo;</a></h2>
+
+      <div class="text" id="typed">
+        <p>This Ecosystem Mapping examines the various roles across the development and release of a single product. This visualization represents a generalized product cycle, as opposed to a specific product case study.</p>
+        <p>The Ecosystem Mapping differs from the Journey Mapping in terms of scope and focus.</p>
+        <p>The product cycle consists of the following stages: planning, requirement analysis, design, development, testing, deployment, maintenance, and retirement.</p>
+        <p>The first ring (pink) depicts the most immediate actors and team connections. These relationships span the entire product cycle.</p>
+        <p>The second ring (blue) depicts actors related to, but not continuously interacting with the product.</p>
+        <p>The third ring (green) depicts actors that do not interact directly with the product, but have influence on development. These include people (eg. customers) and concepts (eg. policies). Tools (eg. Jira) and artifacts (eg. support tickets) are highlighted in yellow.</p>
+      </div>
+
+    </div>
+
+    <svg id="diagram" viewBox="712 105 980 980" role="img" aria-label="Ecosystem map of the product development cycle with pink, blue and green rings of actors and four quadrants: Planning and Research, Development, Testing, and Deployment and Maintenance"></svg>
+  </main>
+
+  <script>
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("diagram");
+      var CX = 1202, CY = 595;
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      }
+
+      /* rings */
+      el("circle", { cx: CX, cy: CY, r: 490, fill: "#1e1e1e" });
+      el("circle", { cx: CX, cy: CY, r: 454, fill: "#566350" });
+      el("circle", { cx: CX, cy: CY, r: 343, fill: "#485060" });
+      el("circle", { cx: CX, cy: CY, r: 221, fill: "#52334f" });
+
+      /* axes */
+      el("path", { d: "M" + (CX - 490) + " " + CY + "H" + (CX + 490) + "M" + CX + " " + (CY - 490) + "V" + (CY + 490),
+        stroke: "#8c8c8c", "stroke-width": "1", fill: "none" });
+      el("path", { d: "M" + (CX - 218) + " " + CY + "H" + (CX - 70) + "M" + (CX + 70) + " " + CY + "H" + (CX + 218),
+        stroke: "#c9a0c4", "stroke-width": "1.2", "stroke-dasharray": "5 4", fill: "none" });
+
+      /* center */
+      el("circle", { cx: CX, cy: CY, r: 63, fill: "#111111" });
+      [["Product", 577], ["Development", 595], ["Cycle", 613]].forEach(function (l) {
+        var t = el("text", { x: CX, y: l[1] + 4.5, "text-anchor": "middle", "font-size": "12.5", "font-weight": "700", fill: "#ffffff" });
+        t.textContent = l[0];
+      });
+
+      /* quadrant labels centred on the black ring (r = 472), each rotated to follow the ring tangent */
+      [["Deployment & Maintenance", -140], ["Planning & Research", -40],
+       ["Testing", 140], ["Development", 40]].forEach(function (q) {
+        var a = q[1] * Math.PI / 180;
+        var x = CX + 472 * Math.cos(a), y = CY + 472 * Math.sin(a);
+        var rot = q[1] < 0 ? q[1] + 90 : q[1] - 90;
+        var t = el("text", { x: x.toFixed(1), y: y.toFixed(1), "text-anchor": "middle", "dominant-baseline": "central",
+          "font-size": "11", fill: "#ffffff",
+          transform: "rotate(" + rot + " " + x.toFixed(1) + " " + y.toFixed(1) + ")" });
+        t.textContent = q[0];
+      });
+
+      /* notes: [x, y, colour, label] */
+      var C = { G: "#d5f1d5", B: "#c9dffa", P: "#f6c4f0", Y: "#fde9c0" };
+      var notes = [
+        /* green and yellow (outer ring) */
+        [1097,190,"Y","Support Tickets"],[1012,220,"G","End Customers"],[1160,216,"G","Executives"],
+        [1087,238,"G","Data Archiving"],[972,261,"G","User Communication"],[927,301,"G","Senior Management"],
+        [890,337,"G","Environment Config"],[843,383,"Y","Updates"],[818,429,"G","Traffic"],
+        [839,465,"G","Domain"],[806,499,"G","Server Status"],[811,536,"Y","Release Notes"],
+        [805,568,"G","Container Orchestraton"],[806,641,"Y","Ask Bob (scripting)"],[806,697,"Y","Refactor Code"],
+        [854,742,"Y","Issues"],[826,788,"Y","Bug Fixes"],[875,827,"G","Audits Infrastructure"],
+        [924,873,"G","Audits Code"],[945,913,"Y","Automated Test Scripts"],[1021,949,"G","Integration Testing"],
+        [1142,963,"G","Regression Testing"],[1069,985,"G","Functional Testing"],[1145,1012,"G","Pre-Beta Customers"],
+        [1255,1012,"Y","Ask Bob (coding)"],[1277,967,"G","Access Controls"],[1369,977,"G","Migrations"],
+        [1414,920,"G","Database Tables"],[1483,891,"Y","Source Code"],[1535,828,"G","Build Environments"],
+        [1559,771,"Y","Microsoft Copilot"],[1574,715,"G","CI/CD Pipelines"],[1603,669,"G","Version Control"],
+        [1589,624,"G","Repositories"],[1609,578,"G","Security Framework"],[1580,550,"G","Microservices"],
+        [1607,522,"Y","Database Models"],[1575,494,"G","Testability Criteria"],[1588,461,"Y","Product Specs"],
+        [1565,430,"G","System Requirements"],[1565,397,"G","Product Vision"],[1522,369,"G","Technical Feasibility"],
+        [1522,337,"G","Security Protocols"],[1509,305,"Y","Data Flows"],[1443,305,"G","Company Policies"],
+        [1482,278,"G","User Journeys"],[1420,274,"G","User Stories"],[1434,243,"G","Business Goals"],
+        [1369,256,"G","Budgets"],[1368,220,"G","Threat Models"],[1318,244,"Y","Jira"],
+        [1286,217,"G","Resource Allocation"],[1225,226,"G","ROI"],[1327,190,"G","Wireframes"],
+        [1254,173,"G","Government Policies"],
+        /* blue (middle ring) */
+        [1115,319,"B","Internal Development Teams"],[1279,337,"B","Lead UI Designer"],
+        [1041,369,"B","Product Monitoring Teams"],[1360,373,"B","UI Designers"],
+        [973,430,"B","Operations Engineers"],[1420,423,"B","Database Administrator"],
+        [1450,474,"B","UX Designers"],[932,522,"B","Support Engineers"],[1478,541,"B","UX Team"],
+        [1486,623,"B","Global Development Teams"],[936,684,"B","Automation Engineer"],
+        [1475,698,"B","Back-End Dev"],[1431,773,"B","Front-End Dev"],[996,789,"B","Testers"],
+        [1327,825,"B","Full Stack Dev"],[1108,862,"B","Security Tester"],[1271,872,"B","Temporary Employees"],
+        /* pink (inner ring) */
+        [1265,418,"P","Product Owners"],[1146,433,"P","Data Engineer"],[1324,469,"P","Stakeholders"],
+        [1081,481,"P","Site Reliability Engineer"],[1254,497,"P","Architects"],[1145,514,"P","Maintenance Devs"],
+        [1357,518,"P","Project Manager"],[1048,541,"P","Second-Line Managers"],[1315,568,"P","Offering Managers"],
+        [1038,625,"P","DevOps"],[1354,627,"P","First-Line Managers"],[1085,661,"P","Support Engineer"],
+        [1295,679,"P","Lead Developer"],[1158,687,"P","QA Engineer"],[1108,731,"P","Security Officer"],
+        [1261,749,"P","Security Engineer"]
+      ];
+
+      notes.forEach(function (n) {
+        var g = el("g", {});
+        var rect = el("rect", { fill: C[n[2]], height: 15 }, g);
+        var t = el("text", { x: n[0], y: n[1] + 2.7, "text-anchor": "middle", "font-size": "7.4", fill: "#111" }, g);
+        t.textContent = n[3];
+        var w = t.getComputedTextLength ? t.getComputedTextLength() : n[3].length * 3.9;
+        rect.setAttribute("width", w + 10);
+        rect.setAttribute("x", n[0] - (w + 10) / 2);
+        rect.setAttribute("y", n[1] - 7.5);
+      });
+    })();
+  </script>
+</body>
+</html>

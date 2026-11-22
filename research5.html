@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Flow | IBM Bob Agent Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Sizes are in vw so the layout scales like the 2000px-wide screenshot */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #161616;
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4.75vw;
+      padding: 0 1.3vw 0 2vw;
+      background: #dadada;
+      font-size: 1.16vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    main {
+      position: relative;
+      min-height: 63vw;
+    }
+
+    .logo {
+      position: absolute;
+      left: 2vw;
+      top: 1.25vw;
+      width: 2.8vw;
+      height: 2.8vw;
+      display: block;
+    }
+
+    .copy {
+      position: absolute;
+      left: 5.6vw;
+      top: 0;
+      width: 26.3vw;
+    }
+
+    h1 {
+      position: absolute;
+      top: 4.3vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 2.32vw;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    h2 {
+      position: absolute;
+      top: 8.6vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 1.46vw;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #000000;
+    }
+    h2 .chev { display: inline-block; padding: 0.2vw 0.45vw; font-weight: 400; color: inherit; text-decoration: none; cursor: pointer; }
+    h2 .chev:hover { color: #2d5ff7; }
+    h2 .chev:focus-visible { outline: 0.15vw solid #000000; outline-offset: 0.05vw; }
+
+    .text {
+      position: absolute;
+      top: 11.1vw;
+      left: 0;
+      width: 100%;
+      font-size: 0.95vw;
+      line-height: 1.39vw;
+    }
+    .text p { margin-bottom: 1.39vw; }
+    .text p.lead { font-weight: 600; }
+
+    #diagram {
+      position: absolute;
+      left: 37.25vw;
+      top: 10vw;
+      width: 59.6vw;
+      height: 35.25vw;
+    }
+    #diagram text {
+      font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Katie Kirke</span>
+    <span>2026</span>
+  </header>
+
+  <main>
+    <a href="index.html" aria-label="Back to home">
+      <svg class="logo" viewBox="-70 -70 140 140" fill="none" stroke="#2f6bd0" stroke-width="7" aria-hidden="true">
+        <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+        <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+        <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+        <g fill="#ffffff">
+          <circle cx="0" cy="-57" r="9"/><circle cx="0" cy="57" r="9"/>
+          <circle cx="-57" cy="0" r="9"/><circle cx="57" cy="0" r="9"/>
+          <circle cx="-38" cy="-35" r="9"/><circle cx="38" cy="-35" r="9"/>
+          <circle cx="-38" cy="35" r="9"/><circle cx="38" cy="35" r="9"/>
+        </g>
+      </svg>
+    </a>
+
+    <div class="copy">
+      <h1>Research Methods</h1>
+      <h2><a class="chev" href="research4.html" aria-label="Previous page">&laquo;</a>User Flow<a class="chev" href="research6.html" aria-label="Next page">&raquo;</a></h2>
+
+      <div class="text" id="typed">
+        <p class="lead">Agentic AI Intervention: Management and Automation</p>
+        <p>This map depicts a three-pronged path, highlighting the potential for agentic AI tools in the senior software engineer’s workflow. The top path, (green), represents the pre-AI adoption workflow. The middle path, (blue), represents the current workflow. Finally, the bottom path, (pink), represents a future workflow.</p>
+        <p>The targeted intervention points allow the engineer to focus on unique, product or situation dependent testing and security tasks. The agents must be easy for the engineer to understand, create, and deploy for various tasks. Integration with message systems allows the agents to work in the background and “ping” the engineer at task problems or at task completion.</p>
+        <p>Pre-AI adoption, the workflow took approximately 6 hours and 30 minutes. With current AI adoption, the workflow takes 40 minutes. With an agentic intervention, this workflow can be completed in the background with a final manual review.</p>
+        <p>This map serves as one particular example where agents may benefit the engineer’s workflow.</p>
+      </div>
+    </div>
+
+    <svg id="diagram" viewBox="745 295 1192 705" role="img" aria-label="User flow with three paths: a green pre-AI workflow, a blue current workflow, and a pink future workflow where an agent handles routine entitlement checks"></svg>
+  </main>
+
+  <script>
+    /* ---------- User flow (coordinates are screenshot pixels) ---------- */
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("diagram");
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      }
+
+      /* centred multi-line text; boldFirst makes the first line bold */
+      function label(cx, cy, lines, size, boldFirst) {
+        var lh = size * 1.4;
+        var t = el("text", { "text-anchor": "middle", "font-size": size, fill: "#161616" });
+        lines.forEach(function (line, i) {
+          var s = el("tspan", { x: cx, y: cy + size * 0.36 + (i - (lines.length - 1) / 2) * lh }, t);
+          if (boldFirst && i === 0) s.setAttribute("font-weight", "700");
+          s.textContent = line;
+        });
+      }
+
+      var WHITE = { fill: "#ffffff", stroke: "#7a7a7a" };
+      var GREEN = { fill: "#c9f5d0", stroke: "#78dc90" };
+      var BLUE  = { fill: "#bfe6ff", stroke: "#5ab4f5" };
+      var PINK  = { fill: "#ffc0f2", stroke: "#f35fd6" };
+
+      /* arrowhead */
+      var defs = el("defs", {});
+      var m = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: "9", refY: "5",
+        markerWidth: "5", markerHeight: "5", orient: "auto-start-reverse" }, defs);
+      el("path", { d: "M1 1L9 5L1 9", fill: "none", stroke: "#6d6d6d", "stroke-width": "1.2" }, m);
+
+      /* connectors */
+      [
+        /* white row */
+        "M847 575H893", "M985 575H1026",
+        /* up to the green path */
+        "M1072 530V351H1159",
+        /* green row */
+        "M1251 351H1297", "M1389 351H1430",
+        /* blue row */
+        "M1118 575H1159", "M1251 575H1297", "M1389 575H1430", "M1522 575H1569",
+        /* down to the pink path */
+        "M801 620V807",
+        /* pink row */
+        "M847 852H893", "M985 852H1026", "M1118 852H1159", "M1251 852H1297", "M1389 852H1429",
+        /* decision branches */
+        "M1475 806V762H1569", "M1475 898V943H1569",
+        "M1661 762H1740V807", "M1661 943H1740V898",
+        "M1786 852H1836"
+      ].forEach(function (d) {
+        el("path", { d: d, fill: "none", stroke: "#6d6d6d", "stroke-width": "1", "marker-end": "url(#arr)" });
+      });
+
+      function box(x1, y1, x2, y2, c, lines, boldFirst) {
+        el("rect", { x: x1, y: y1, width: x2 - x1, height: y2 - y1, fill: c.fill, stroke: c.stroke, "stroke-width": "1.4" });
+        label((x1 + x2) / 2, (y1 + y2) / 2, lines, 8.6, boldFirst);
+      }
+
+      /* white (shared) steps */
+      box(756, 530, 847, 621, WHITE, ["Task Received:", "perform routine", "entitlement checks"], true);
+      box(893, 530, 985, 621, WHITE, ["The engineer", "navigates to", "AccessHub"]);
+      box(1026, 530, 1118, 621, WHITE, ["The engineer exports", "an Excel report listing", "entitlements"]);
+
+      /* green: pre-AI */
+      box(1159, 306, 1251, 397, GREEN, ["The engineer sorts", "Excel report by", "Entitlement name,", "then user name"]);
+      box(1297, 306, 1389, 397, GREEN, ["The engineer goes to", "Cloud and checks", "each access group", "against the report,", "manually noting", "deviations"]);
+      box(1430, 306, 1522, 397, GREEN, ["The engineer", "addresses deviations"]);
+
+      /* blue: current */
+      box(1159, 530, 1251, 621, BLUE, ["The engineer places", "the report in a", "directory with an AI-", "created script for", "automation"]);
+      box(1297, 530, 1389, 621, BLUE, ["The engineer", "executes the script", "using the AI tool"]);
+      box(1430, 530, 1522, 621, BLUE, ["The engineer", "manually looks at the", "script result for", "deviations"]);
+      box(1569, 530, 1661, 621, BLUE, ["The engineer", "addresses any", "deviations"]);
+
+      /* pink: future */
+      box(756, 807, 847, 898, PINK, ["This routine task is", "automatically", "handled by an agent", "the engineer has", "created"]);
+      box(893, 807, 985, 898, PINK, ["The agent navigates", "to AccessHub"]);
+      box(1026, 807, 1118, 898, PINK, ["The agent exports an", "Excel report listing", "entitlements"]);
+      box(1159, 807, 1251, 898, PINK, ["The agent executes a", "script, pre-approved", "during building"]);
+      box(1297, 807, 1389, 898, PINK, ["The agent examines", "the results for", "deviations"]);
+
+      /* decision diamond */
+      el("polygon", { points: "1475,806 1521,852 1475,898 1429,852", fill: PINK.fill, stroke: PINK.stroke, "stroke-width": "1.4" });
+      label(1475, 852, ["Are", "deviations", "present ?"], 8.6);
+
+      box(1569, 716, 1661, 807, PINK, ["The agent sends a", "script report to the", "engineer for human", "approval"]);
+      box(1569, 898, 1661, 989, PINK, ["The agent sends a", "script report and", "asks for approval to", "address the", "deviations"]);
+      box(1695, 807, 1786, 898, PINK, ["The engineer is", "notified of the agent’s", "actions and provides", "human approval"]);
+      box(1836, 807, 1927, 898, PINK, ["The agent alerts the", "engineer once more", "at task completion"]);
+
+      /* branch labels */
+      [["No", 1516, 749], ["Yes", 1517, 930]].forEach(function (b) {
+        var t = el("text", { x: b[1], y: b[2], "text-anchor": "middle", "font-size": "7.5", "font-weight": "600", fill: "#161616" });
+        t.textContent = b[0];
+      });
+    })();
+  </script>
+</body>
+</html>

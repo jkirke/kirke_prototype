@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journey Mapping I | IBM Bob Agent Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Sizes are in vw so the layout scales like the 2000px-wide screenshot */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #161616;
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4.75vw;
+      padding: 0 1.3vw 0 2vw;
+      background: #dadada;
+      font-size: 1.16vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    main {
+      position: relative;
+      min-height: 63vw;
+    }
+
+    .logo {
+      position: absolute;
+      left: 2vw;
+      top: 1.25vw;
+      width: 2.8vw;
+      height: 2.8vw;
+      display: block;
+    }
+
+    .copy {
+      position: absolute;
+      left: 5.6vw;
+      top: 0;
+      width: 26.3vw;
+    }
+
+    h1 {
+      position: absolute;
+      top: 4.3vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 2.32vw;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    h2 {
+      position: absolute;
+      top: 8.6vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 1.46vw;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #000000;
+    }
+    h2 .chev { display: inline-block; padding: 0.2vw 0.45vw; font-weight: 400; color: inherit; text-decoration: none; cursor: pointer; }
+    h2 .chev:hover { color: #2d5ff7; }
+    h2 .chev:focus-visible { outline: 0.15vw solid #000000; outline-offset: 0.05vw; }
+
+    .text {
+      position: absolute;
+      top: 11.1vw;
+      left: 0;
+      width: 100%;
+      font-size: 0.95vw;
+      line-height: 1.39vw;
+    }
+    .text p { margin-bottom: 1.39vw; }
+
+    #diagram {
+      position: absolute;
+      left: 49vw;
+      top: 1.45vw;
+      width: 49vw;
+      height: 56.8vw;
+    }
+    #diagram text {
+      font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Katie Kirke</span>
+    <span>2026</span>
+  </header>
+
+  <main>
+    <a href="index.html" aria-label="Back to home">
+      <svg class="logo" viewBox="-70 -70 140 140" fill="none" stroke="#2f6bd0" stroke-width="7" aria-hidden="true">
+        <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+        <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+        <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+        <g fill="#ffffff">
+          <circle cx="0" cy="-57" r="9"/><circle cx="0" cy="57" r="9"/>
+          <circle cx="-57" cy="0" r="9"/><circle cx="57" cy="0" r="9"/>
+          <circle cx="-38" cy="-35" r="9"/><circle cx="38" cy="-35" r="9"/>
+          <circle cx="-38" cy="35" r="9"/><circle cx="38" cy="35" r="9"/>
+        </g>
+      </svg>
+    </a>
+
+    <div class="copy">
+      <h1>Research Methods</h1>
+      <h2><a class="chev" href="research2.html" aria-label="Previous page">&laquo;</a>Journey Mapping I<a class="chev" href="research4.html" aria-label="Next page">&raquo;</a></h2>
+
+      <div class="text" id="typed">
+        <p>This Journey Mapping examines the senior staff software engineer’s role across the development and release of a single product. This visualization represents a generalized product cycle, as opposed to a specific product case study.</p>
+        <p>The product cycle consists of the following stages: planning, requirement analysis, design, development, testing, deployment, maintenance, and retirement</p>
+        <p>In the planning phase, the project manager organizes the project, stakeholders approve budgets, and the architect evaluates the project’s technical feasibility.</p>
+        <p>In the requirement analysis phase, the architect analyzes technological needs and constraints. Simultaneously, product owners interact with stakeholders and understand business needs. Software testers identify the product’s testability criteria.</p>
+        <p>In the design phase, the architect creates project documentation for the developers. The UX team maps the design systems and conducts user research. If necessary, the database administrator designs database structures for the product. The security engineer ensures the product is compliant with security protocols. Since products are designed with security as opposed to made secure after creation, compliance is important early on.</p>
+        <p>In the development phase, developers begin writing and integrating source code for the product. The developers may make changes to the initial documentation provided by the architect.</p>
+      </div>
+    </div>
+
+    <svg id="diagram" viewBox="980 124 980 1136" role="img" aria-label="Journey map for the Requirement Analysis, Design and Development phases showing objectives, actions, pains and gains, mood chart and actors"></svg>
+  </main>
+
+  <script>
+    /* ---------- Journey map (coordinates are screenshot pixels) ---------- */
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("diagram");
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      }
+
+      /* centred multi-line text */
+      function label(cx, cy, lines, size, fill, weight, parent) {
+        var lh = size * 1.22;
+        var t = el("text", { "text-anchor": "middle", "font-size": size, fill: fill || "#161616",
+          "font-weight": weight || 400 }, parent);
+        lines.forEach(function (line, i) {
+          var s = el("tspan", { x: cx, y: cy + size * 0.36 + (i - (lines.length - 1) / 2) * lh }, t);
+          s.textContent = line;
+        });
+      }
+
+      var MAG = "#f947c2", LIGHT = "#ffc3f0";
+      var PINK = { fill: "#ffc3f0", stroke: "#f35fd6" };
+      var GREEN = { fill: "#cdf6d2", stroke: "#74dc8f" };
+      var BLUE = { fill: "#cde8ff", stroke: "#4eaaf2" };
+
+      function card(x1, y1, x2, y2, c, lines, size, r) {
+        el("rect", { x: x1, y: y1, width: x2 - x1, height: y2 - y1, rx: r || 14, fill: c.fill, stroke: c.stroke, "stroke-width": "1.6" });
+        label((x1 + x2) / 2, (y1 + y2) / 2, lines, size, "#161616");
+      }
+
+      /* row label cells */
+      function rowLabel(y1, y2, text, dark) {
+        el("rect", { x: 980, y: y1, width: 81, height: y2 - y1, fill: dark ? MAG : LIGHT });
+        var cx = 1021, cy = (y1 + y2) / 2;
+        var t = el("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", "font-size": "14",
+          "font-weight": "700", fill: dark ? "#ffffff" : "#161616", transform: "rotate(-90 " + cx + " " + cy + ")" });
+        t.textContent = text;
+      }
+
+      /* row rules */
+      function rule(y) {
+        el("path", { d: "M1061 " + y + "H1958", stroke: "#8f8f8f", "stroke-width": "1", fill: "none" });
+      }
+
+      /* ----- phase chevrons ----- */
+      rowLabel(124, 189, "Phase", true);
+      [["Requirement Analysis", 1061, 1362, false], ["Design", 1364, 1661, true], ["Development", 1661, 1958, true]].forEach(function (p) {
+        var x0 = p[1], x1 = p[2], y0 = 124, y1 = 189, m = 156.5, d = 12;
+        var path = "M" + x0 + " " + y0 + "H" + (x1 - d) + "L" + x1 + " " + m + "L" + (x1 - d) + " " + y1 + "H" + x0 +
+          (p[3] ? "L" + (x0 + d) + " " + m : "") + "Z";
+        el("path", { d: path, fill: "#dccbff", stroke: "#b48cf5", "stroke-width": "1.5" });
+        label((x0 + x1) / 2, m, [p[0]], 20, "#161616", 600);
+      });
+
+      /* ----- dashed column dividers ----- */
+      [1356, 1657, 1958].forEach(function (x) {
+        el("path", { d: "M" + x + " 208V1257", stroke: "#8f8f8f", "stroke-width": "1", "stroke-dasharray": "4 3", fill: "none" });
+      });
+
+      /* ----- Objective ----- */
+      rowLabel(208, 322, "Objective", false);
+      rule(208); rule(322);
+      card(1095, 230, 1312, 297, PINK, ["Collect and analyze data on", "system needs"], 13.5);
+      card(1392, 230, 1607, 297, PINK, ["Compiles system architecture,", "models, and interfaces into a te..."], 13.5);
+      card(1693, 230, 1907, 297, PINK, ["Developers write and configure", "code based on product design"], 13.5);
+
+      /* ----- Actions ----- */
+      rowLabel(342, 683, "Actions", true);
+      rule(342); rule(683);
+      card(1097, 356, 1314, 423, GREEN, ["Review Test Requirements"], 13.5);
+      card(1392, 356, 1607, 423, GREEN, ["Test bed setup"], 13.5);
+      card(1392, 436, 1607, 503, GREEN, ["Test plan creation"], 13.5);
+      card(1693, 356, 1907, 423, GREEN, ["Test plan creation"], 13.5);
+
+      /* ----- Pains & Gains ----- */
+      rowLabel(707, 893, "Pains & Gains", false);
+      rule(707); rule(800); rule(893);
+      card(1097, 721, 1314, 788, PINK, ["Requirements are often poorly", "documented or incorrect"], 13.5);
+      card(1388, 721, 1607, 788, PINK, ["Language is written for developers and", "excludes customer scenarios. Additional", "conversations are required for testing."], 10.5);
+      card(1693, 721, 1911, 788, PINK, ["Difficulties getting test plan", "approval from multiple developers"], 13.5);
+      card(1097, 813, 1314, 881, BLUE, ["Information still allows testers to", "scope work and create rough sizings"], 13);
+      card(1388, 813, 1607, 881, BLUE, ["Information from additional", "conversations is vital for test plan", "creation"], 11.5);
+      card(1693, 813, 1911, 881, BLUE, ["The test plan creation is the first major", "milestone, so solidifying the plan is", "important"], 11.5);
+
+      /* ----- Mood Chart ----- */
+      rowLabel(914, 1078, "Mood Chart", true);
+      rule(914); rule(1078);
+
+      /* mood connector lines (drawn first so cards sit on top) */
+      [["M1238 973L1443 1046"], ["M1552 1046H1749"], ["M1841 1046L1958 992"]].forEach(function (p) {
+        el("path", { d: p[0], stroke: "#8f8f8f", "stroke-width": "1", fill: "none" });
+      });
+
+      card(1097, 1001, 1314, 1068, GREEN, ["Project details are seen for the first", "time, which is exciting and interesting"], 11.5);
+      card(1392, 943, 1607, 1010, GREEN, ["The size of the project is realized and", "doubt arises around timeline / scope"], 11.5);
+      card(1691, 944, 1909, 1010, GREEN, ["Creating the test plan is stressful because", "developers either give little details on the", "project or swamp testers with tests"], 10.5);
+
+      function mood(x1, x2, cy, name, kind) {
+        el("rect", { x: x1, y: cy - 16, width: x2 - x1, height: 32, rx: 16, fill: GREEN.fill, stroke: GREEN.stroke, "stroke-width": "1.6" });
+        var fx = x1 + 18;
+        var g = el("g", { transform: "translate(" + fx + " " + cy + ")" });
+        el("circle", { r: 13, fill: "#111111" }, g);
+        el("circle", { cx: -4.5, cy: -3, r: 1.9, fill: "#ffffff" }, g);
+        el("circle", { cx: 4.5, cy: -3, r: 1.9, fill: "#ffffff" }, g);
+        if (kind === "smile") {
+          el("path", { d: "M-6 3Q0 9 6 3", stroke: "#ffffff", "stroke-width": "1.8", fill: "none", "stroke-linecap": "round" }, g);
+        } else {
+          el("path", { d: "M-6 7Q0 1 6 7", stroke: "#ffffff", "stroke-width": "1.8", fill: "none", "stroke-linecap": "round" }, g);
+        }
+        if (kind === "angry") {
+          el("path", { d: "M-8 -8L-2 -5M8 -8L2 -5", stroke: "#ffffff", "stroke-width": "1.8", fill: "none", "stroke-linecap": "round" }, g);
+        }
+        var t = el("text", { x: x1 + 36, y: cy + 5, "font-size": "14", fill: "#161616" });
+        t.textContent = name;
+      }
+      mood(1147, 1238, 972, "Curious", "smile");
+      mood(1443, 1552, 1046, "Concerned", "frown");
+      mood(1749, 1841, 1046, "Stressed", "angry");
+
+      /* ----- Actors ----- */
+      rowLabel(1099, 1257, "Actors", false);
+      rule(1099); rule(1257);
+      [
+        [1097, 1214, 1121, "Software Testers"], [1101, 1210, 1167, "Product Owner"], [1101, 1210, 1212, "Architect"],
+        [1371, 1488, 1117, "Software Testers"], [1513, 1607, 1117, "UX Team"],
+        [1371, 1480, 1163, "Developers"], [1513, 1630, 1163, "Database Admin"], [1371, 1497, 1209, "Security Engineer"],
+        [1672, 1766, 1117, "Developers"], [1672, 1766, 1162, "Architect"], [1672, 1789, 1207, "Software Testers"]
+      ].forEach(function (a) {
+        card(a[0], a[2], a[1], a[2] + 32, BLUE, [a[3]], 13.5, 16);
+      });
+    })();
+  </script>
+</body>
+</html>

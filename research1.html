@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Methods | IBM Bob Agent Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* Sizes are in vw so the layout scales like the 1742px-wide screenshot */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #161616;
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 5vw;
+      padding: 0 1.3vw 0 2.5vw;
+      background: #dadada;
+      font-size: 1.15vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    main {
+      position: relative;
+      min-height: 59.5vw;
+    }
+
+    .logo {
+      position: absolute;
+      left: 2.55vw;
+      top: 1.2vw;
+      width: 2.75vw;
+      height: 2.75vw;
+      display: block;
+    }
+
+    .copy {
+      position: absolute;
+      left: 6.14vw;
+      top: 0;
+      width: 26vw;
+    }
+
+    h1 {
+      position: absolute;
+      top: 4.2vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 2.3vw;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    h2 {
+      position: absolute;
+      top: 8.5vw;
+      left: 0;
+      white-space: nowrap;
+      font-size: 1.45vw;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #000000;
+    }
+    h2 .chev { display: inline-block; padding: 0.2vw 0.45vw; font-weight: 400; color: inherit; text-decoration: none; cursor: pointer; }
+    h2 .chev:hover { color: #2d5ff7; }
+    h2 .chev:focus-visible { outline: 0.15vw solid #000000; outline-offset: 0.05vw; }
+
+    .typed {
+      position: absolute;
+      top: 11.1vw;
+      left: 0;
+      width: 100%;
+      font-size: 0.97vw;
+      line-height: 1.38vw;
+    }
+    .typed p { margin-bottom: 1.38vw; }
+
+    #diagram {
+      position: absolute;
+      left: 41.4vw;
+      top: 1vw;
+      width: 56.8vw;
+      height: 57.1vw;
+    }
+    #diagram text {
+      font-family: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Katie Kirke</span>
+    <span>2026</span>
+  </header>
+
+  <main>
+    <a href="index.html" aria-label="Back to home">
+      <svg class="logo" viewBox="-70 -70 140 140" fill="none" stroke="#2f6bd0" stroke-width="7" aria-hidden="true">
+        <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+        <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+        <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+        <g fill="#ffffff">
+          <circle cx="0" cy="-57" r="9"/><circle cx="0" cy="57" r="9"/>
+          <circle cx="-57" cy="0" r="9"/><circle cx="57" cy="0" r="9"/>
+          <circle cx="-38" cy="-35" r="9"/><circle cx="38" cy="-35" r="9"/>
+          <circle cx="-38" cy="35" r="9"/><circle cx="38" cy="35" r="9"/>
+        </g>
+      </svg>
+    </a>
+
+    <div class="copy">
+      <h1>Research Methods</h1>
+      <h2><a class="chev" href="index.html" aria-label="Previous page">&laquo;</a>Stakeholder Mapping<a class="chev" href="research2.html" aria-label="Next page">&raquo;</a></h2>
+
+      <div class="typed" id="typed">
+        <p>This <em>Stakeholder Mapping</em> centers an individual senior staff software engineer and visualizes team and company wide relationships.</p>
+        <p>The first ring (pink) depicts the most immediate actors and team connections. These developers and managers continuously interact with the software engineer.</p>
+        <p>The second ring (blue) depicts actors related to, but not continuously interacting with the software engineer. These include other managers and teams which may or may not be involved in the development of a single product.</p>
+        <p>The third ring (green) depicts actors that do not interact with the software engineer, but have influence on the product cycle. These include both people (eg. customers) and concepts (eg. policies).</p>
+        <p>Additionally, the pink dashed lines depict task-based connections as opposed to collaborative or team-based connections.</p>
+      </div>
+
+    </div>
+
+    <svg id="diagram" viewBox="720 105 990 995" role="img" aria-label="Stakeholder map with the software engineer at the center, surrounded by pink, blue and green rings of actors"></svg>
+  </main>
+
+  <script>
+    /* ---------- Diagram ---------- */
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var svg = document.getElementById("diagram");
+      var CX = 1215, CY = 602;
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      }
+
+      var defs = el("defs", {});
+      var marker = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: "9", refY: "5",
+        markerWidth: "5", markerHeight: "5", orient: "auto-start-reverse" }, defs);
+      el("path", { d: "M1 1 L9 5 L1 9", fill: "none", stroke: "#8a8a8a", "stroke-width": "1.3" }, marker);
+
+      /* rings */
+      el("circle", { cx: CX, cy: CY, r: 490, fill: "none", stroke: "#e040c4", "stroke-width": "1.2" });
+      el("circle", { cx: CX, cy: CY, r: 370, fill: "none", stroke: "#d4d4d4", "stroke-width": "1", "stroke-dasharray": "4 3" });
+      el("circle", { cx: CX, cy: CY, r: 240, fill: "none", stroke: "#d4d4d4", "stroke-width": "1", "stroke-dasharray": "4 3" });
+
+      /* connectors */
+      var lines = [
+        "M1192 265V188", "M1238 188V265",
+        "M1248 293H1369V233",
+        "M1215 330V396",
+        "M1196 535V462", "M1234 462V535",
+        "M1215 670V733",
+        "M1182 412H1024V570", "M1182 445H1064V570",
+        "M1248 408H1390V785H1248", "M1352 570V445H1248",
+        "M780 570V450H1182", "M907 570V449",
+        "M874 585H815", "M815 623H874",
+        "M940 585H1013", "M1013 617H940",
+        "M1080 582H1148", "M1148 617H1080",
+        "M1282 578H1337", "M1337 617H1282",
+        "M1405 582H1493", "M1493 622H1405",
+        "M1527 636V700H1437V775",
+        "M1437 840V917H1249",
+        "M1215 800V884",
+        "M1014 807H1062V787H1182",
+        "M1182 745H1062V637", "M1182 765H1025V637", "M1248 748H1352V637"
+      ];
+      lines.forEach(function (d) {
+        el("path", { d: d, fill: "none", stroke: "#a0a0a0", "stroke-width": "1", "marker-end": "url(#arr)" });
+      });
+      ["M1163 553L1014 432", "M940 570L1035 449", "M1020 570L1035 449"].forEach(function (d) {
+        el("path", { d: d, fill: "none", stroke: "#e040c4", "stroke-width": "1", "stroke-dasharray": "4 3" });
+      });
+
+      /* nodes */
+      var G = "#d6f5dc", B = "#cce4fb", P = "#f5c3ee";
+      var nodes = [
+        [1215, 155, G, "Pre-Beta|Customers"], [1061, 199, G, "Database|Administrator"],
+        [1369, 199, G, "Stakeholders"], [950, 264, G, "Global|Development|Teams"],
+        [1479, 264, G, "Customers"], [847, 376, G, "Product|Monitoring|Teams"],
+        [1567, 360, G, "Competitors"], [1618, 475, G, "Government|Policies"],
+        [780, 602, G, "Senior|Management"], [1647, 602, G, "Company|Policies"],
+        [811, 757, G, "Support|Engineers"], [1618, 757, G, "Executives"],
+        [906, 912, G, "Operations|Engineers"], [1520, 912, G, "Technological|Development"],
+        [1061, 1005, G, "Product|Owners"], [1369, 1005, G, "Artificial|Intelligence"],
+        [1215, 1038, G, "Business|Analyst"],
+        [1215, 297, B, "Offering|Managers"], [980, 399, B, "Internal|Development|Teams"],
+        [907, 602, B, "Second Line|Manager"], [1527, 602, B, "Architects"],
+        [981, 807, B, "Temporary|Employees"], [1435, 807, B, "Lead UI|Designer"],
+        [1215, 917, B, "UX Team"],
+        [1215, 429, P, "Project|Managers"], [1047, 602, P, "First Line|Management"],
+        [1371, 602, P, "Lead|Developer"], [1215, 766, P, "Developers"]
+      ];
+      nodes.forEach(function (n) {
+        el("rect", { x: n[0] - 33, y: n[1] - 33, width: 66, height: 66, fill: n[2] });
+        var parts = n[3].split("|"), lh = 10.5;
+        var t = el("text", { "text-anchor": "middle", "font-size": "7.6", "font-weight": "600", fill: "#111" });
+        parts.forEach(function (line, i) {
+          var s = el("tspan", { x: n[0], y: n[1] + 2.7 + (i - (parts.length - 1) / 2) * lh }, t);
+          s.textContent = line;
+        });
+      });
+
+      /* center */
+      el("circle", { cx: CX, cy: CY, r: 68, fill: "#d9c9f9", stroke: "#6f3fe0", "stroke-width": "1" });
+      [["Software", 585, 12.5, 600], ["Engineer:", 601, 12.5, 600],
+       ["Security Focal", 614, 7.4, 600], ["Software Tester", 626, 7.4, 600]].forEach(function (l) {
+        var t = el("text", { x: CX, y: l[1], "text-anchor": "middle", "font-size": l[2], "font-weight": l[3], fill: "#111" });
+        t.textContent = l[0];
+      });
+
+      /* connector labels */
+      var labels = [
+        [1126, 406, "evaluates job performance"], [1105, 446, "presents to on project progress"],
+        [1290, 408, "provides guidance and feedback"], [1307, 446, "reports on progress"],
+        [1315, 294, "oversees product development"], [978, 580, "reports on team performance"],
+        [978, 617, "evaluates job performance"], [1115, 582, "reports on solo performance"],
+        [1115, 617, "evaluates job performance"], [1308, 579, "reports on progress"],
+        [1308, 618, "relies on testing results"], [1448, 578, "follows and updates documents"],
+        [1448, 622, "creates initial documentation"], [1483, 701, "may push back against coding"],
+        [1343, 914, "collaborates outside of the team"], [1120, 783, "may collaborate with"],
+        [1120, 746, "evaluates job performance"], [1120, 764, "reports on solo performance"],
+        [1300, 748, "reports on project performance"], [1300, 784, "evaluates job performance"],
+        [1187, 225, "acts as company interface", -90], [1241, 225, "oversees product development", -90],
+        [1213, 363, "reports to on externals", -90], [1188, 498, "reports on progress", -90],
+        [1236, 498, "organizes project", -90], [1213, 702, "collaborates with", -90],
+        [1213, 842, "collaborates outside of the team", -90],
+        [1117, 507, "monthly architecture audit", 50]
+      ];
+      labels.forEach(function (l) {
+        var a = { x: l[0], y: l[1], "text-anchor": "middle", "font-size": "5.4", fill: "#333" };
+        if (l[3]) a.transform = "rotate(" + l[3] + " " + l[0] + " " + l[1] + ")";
+        var t = el("text", a);
+        t.textContent = l[2];
+      });
+    })();
+  </script>
+</body>
+</html>
