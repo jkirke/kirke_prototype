@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entitlement Automation Agent | IBM Bob</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #ffffff;
+      color: #000000;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-window {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      background: #ffffff;
+    }
+
+    /* Top Browser/Window Bar */
+    .window-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      padding: 0 16px;
+      background: #fbfbfb;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #8c8c8c;
+    }
+
+    .nav-arrow {
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+
+    .nav-arrow:hover {
+      color: #161616;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 480px;
+      max-width: 40vw;
+      height: 26px;
+      padding: 0 10px;
+      background: #ffffff;
+      border: 1px solid #dfdfdf;
+      border-radius: 6px;
+      color: #6e6e6e;
+      font-size: 12px;
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-family: inherit;
+      font-size: 12px;
+      color: #161616;
+    }
+
+    .window-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6e6e6e;
+    }
+
+    .window-icon-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+    }
+
+    .window-icon-btn:hover {
+      background: #eeeeee;
+      color: #161616;
+    }
+
+    /* Main Window Layout */
+    .window-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Activity Bar */
+    .activity-bar {
+      width: 46px;
+      background: #ffffff;
+      border-right: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 8px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .activity-top-icons, .activity-bottom-icons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .activity-icon {
+      width: 100%;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4b4b4b;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+    }
+
+    .activity-icon:hover {
+      color: #000000;
+    }
+
+    .activity-icon.active {
+      color: #000000;
+    }
+
+    .activity-icon.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #0f62fe;
+    }
+
+    /* Left Sidebar Panel */
+    .sidebar-panel {
+      width: 250px;
+      background: #ffffff;
+      border-right: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .sidebar-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #333333;
+    }
+
+    .sidebar-header .more-dots {
+      cursor: pointer;
+      color: #6e6e6e;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+    }
+
+    .sidebar-section {
+      margin-top: 6px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #333333;
+      cursor: pointer;
+    }
+
+    .section-title .caret {
+      font-size: 9px;
+      color: #555555;
+    }
+
+    .sidebar-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 2px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px 4px 24px;
+      font-size: 12px;
+      color: #222222;
+      cursor: pointer;
+      line-height: 1.4;
+      transition: background 0.1s;
+    }
+
+    .sidebar-item:hover {
+      background: #f4f4f4;
+    }
+
+    .item-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer-sections {
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+    }
+
+    .footer-section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #555555;
+      cursor: pointer;
+    }
+
+    .footer-section-title .caret {
+      font-size: 9px;
+      color: #777777;
+    }
+
+    /* Center Content Area */
+    .content-area {
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+      padding: clamp(16px, 2.8vh, 32px) clamp(18px, 2.5vw, 40px);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 680px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Calendar Header */
+    .calendar-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      margin-bottom: clamp(12px, 2.2vh, 26px);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: clamp(24px, 2.8vw, 36px);
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: -0.02em;
+    }
+
+    /* Weekday Headers - 5 columns */
+    .weekday-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(8px, 1.1vw, 14px);
+      margin-bottom: clamp(6px, 1vh, 12px);
+      text-align: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .weekday-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #333333;
+    }
+
+    /* 5x5 Calendar Grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: clamp(8px, 1.1vw, 14px);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .cal-cell {
+      background: #d8d8d8;
+      border-radius: 3px;
+      min-height: 0;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 8px;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .cal-cell:hover {
+      background: #cecece;
+    }
+
+    .cal-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1;
+    }
+
+    .cal-event-icon {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .cal-event-icon:hover {
+      transform: scale(1.15);
+    }
+
+    /* Event Icon Shapes */
+    .star-icon {
+      color: #1c68f3;
+    }
+
+    .diamond-icon {
+      color: #9340ff;
+    }
+
+    .heart-icon {
+      color: #198038;
+    }
+
+    /* Right Agent Manager Panel */
+    .assistant-panel {
+      width: 440px;
+      max-width: 40vw;
+      background: #ffffff;
+      border-left: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .assistant-header {
+      height: 36px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .assistant-tab {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #161616;
+      position: relative;
+      padding: 8px 4px;
+      border-bottom: 2px solid #161616;
+    }
+
+    .assistant-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #6e6e6e;
+    }
+
+    .assistant-icon-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      transition: color 0.15s;
+    }
+
+    .assistant-icon-btn:hover {
+      color: #161616;
+    }
+
+    /* Subheader with Agent Title */
+    .assistant-subheader {
+      padding: 14px 18px 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #161616;
+      flex-shrink: 0;
+    }
+
+    /* Assistant Body / Chat */
+    .assistant-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 18px 18px;
+      overflow-y: auto;
+    }
+
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .user-bubble {
+      background: #edf5ff;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: #161616;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .assistant-bubble {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #161616;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 2px 2px 4px;
+    }
+
+    .assistant-bubble p {
+      margin: 0;
+    }
+
+    /* Instructions Confirmation Card */
+    .instruction-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #ffffff;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .instruction-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      font-size: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #222222;
+    }
+
+    .instruction-row:last-child {
+      border-bottom: none;
+    }
+
+    .instruction-label strong {
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .instruction-edit {
+      color: #1871f4;
+      text-decoration: none;
+      font-size: 11.5px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .instruction-edit:hover {
+      text-decoration: underline;
+    }
+
+    /* Action Row with Button and New Task */
+    .instruction-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .generate-template-btn {
+      background: #1461ff;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 7px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .generate-template-btn:hover {
+      background: #0353e9;
+      transform: translateY(-1px);
+    }
+
+    .generate-template-btn:active {
+      transform: translateY(0);
+    }
+
+    .new-task-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: #555555;
+      cursor: pointer;
+    }
+
+    .new-task-link:hover {
+      color: #161616;
+    }
+
+    /* Assistant Footer */
+    .assistant-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #555555;
+      padding-left: 4px;
+    }
+
+    .status-indicator svg {
+      width: 13px;
+      height: 13px;
+      color: #555555;
+    }
+
+    /* Prompt Box */
+    .prompt-container {
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 12px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 84px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .prompt-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: #161616;
+      resize: none;
+      background: transparent;
+      line-height: 1.4;
+    }
+
+    .prompt-input::placeholder {
+      color: #888888;
+    }
+
+    .prompt-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .prompt-tools-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6e6e6e;
+    }
+
+    .prompt-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .prompt-btn:hover {
+      color: #161616;
+    }
+
+    .prompt-stop-btn {
+      width: 16px;
+      height: 16px;
+      background: #da1e28;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+
+    .prompt-stop-btn:hover {
+      opacity: 0.85;
+      transform: scale(1.1);
+    }
+
+    /* Bottom Status Bar */
+    .status-bar {
+      height: 22px;
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 11px;
+      color: #616161;
+      user-select: none;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .status-badge:hover {
+      color: #161616;
+    }
+
+    /* Schedule Input (shown after pause) */
+    .schedule-input {
+      width: 240px;
+      height: 26px;
+      margin-left: 8px;
+      padding: 0 6px;
+      border: 1px solid #161616;
+      outline: none;
+      font-family: inherit;
+      font-size: 12px;
+      color: #161616;
+      background: #ffffff;
+    }
+
+    /* Scope Section */
+    .scope-section {
+      border-top: 1px solid #e0e0e0;
+      margin-top: 8px;
+      padding-top: 14px;
+    }
+
+    .scope-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #161616;
+      margin-bottom: 8px;
+    }
+
+    .scope-desc {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #161616;
+      margin-bottom: 12px;
+    }
+
+    .scope-list {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .scope-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .scope-option:last-child {
+      border-bottom: none;
+    }
+
+    .scope-option input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .scope-option strong {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .scope-option span {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #333333;
+    }
+
+    .scope-other {
+      width: 100%;
+      height: 26px;
+      margin-top: 6px;
+      padding: 0 6px;
+      border: 1px solid #161616;
+      outline: none;
+      font-family: inherit;
+      font-size: 12px;
+      color: #161616;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-window">
+    
+    <!-- Top Window / Browser Bar -->
+    <header class="window-header">
+      <div class="nav-controls">
+        <span class="nav-arrow" title="Back" onclick="history.back()">&larr;</span>
+        <span class="nav-arrow" title="Forward" onclick="history.forward()">&rarr;</span>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" placeholder="Search" value="Search" readonly>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6e6e6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+
+      <div class="window-actions">
+        <div class="window-icon-btn" title="Toggle Sidebar">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 2.5v11zM2.5 2a.5.5 0 0 0-.5.5V13.5a.5.5 0 0 0 .5.5H5V2H2.5zm3.5 0v12h7.5a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5H6z"/>
+          </svg>
+        </div>
+        <div class="window-icon-btn" title="Toggle Panel">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 2.5v11zM2 10.5V13.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V10.5H2zm12-1V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5V9.5h12z"/>
+          </svg>
+        </div>
+        <div class="window-icon-btn" title="Maximize Window">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1.5 1.5A1.5 1.5 0 0 1 3 0h10a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5H3a1.5 1.5 0 0 1-1.5-1.5v-13zM3 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H3z"/>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- Window Body -->
+    <div class="window-body">
+      
+      <!-- Left Activity Bar -->
+      <nav class="activity-bar">
+        <div class="activity-top-icons">
+          <!-- Files icon -->
+          <div class="activity-icon active" title="Explorer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Search icon -->
+          <div class="activity-icon" title="Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- Source Control icon -->
+          <div class="activity-icon" title="Source Control">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="3"></circle>
+              <circle cx="6" cy="6" r="3"></circle>
+              <path d="M6 9v12"></path>
+              <path d="M18 9a9 9 0 0 0-9 9"></path>
+            </svg>
+          </div>
+
+          <!-- Testing / Run icon -->
+          <div class="activity-icon" title="Run and Debug">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+
+          <!-- Chat icon -->
+          <div class="activity-icon" title="Bob Chat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+
+          <!-- Extensions icon -->
+          <div class="activity-icon" title="Extensions">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+
+          <!-- Bob Snowflake icon -->
+          <div class="activity-icon" title="IBM Bob" onclick="location.href='index.html'">
+            <svg width="20" height="20" viewBox="-70 -70 140 140" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt">
+              <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+              <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+              <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+              <g fill="#ffffff" stroke="currentColor" stroke-width="5">
+                <circle cx="0" cy="-57" r="7"/>
+                <circle cx="0" cy="57" r="7"/>
+                <circle cx="-57" cy="0" r="7"/>
+                <circle cx="57" cy="0" r="7"/>
+                <circle cx="-38" cy="-35" r="7"/>
+                <circle cx="38" cy="-35" r="7"/>
+                <circle cx="-38" cy="35" r="7"/>
+                <circle cx="38" cy="35" r="7"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="activity-bottom-icons">
+          <!-- Profile icon -->
+          <div class="activity-icon" title="Accounts">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+
+          <!-- Settings icon -->
+          <div class="activity-icon" title="Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sidebar Panel -->
+      <aside class="sidebar-panel">
+        <div class="sidebar-main">
+          <div class="sidebar-header">
+            <span>AGENTS</span>
+            <span class="more-dots" title="More Actions">...</span>
+          </div>
+
+          <!-- Active Section -->
+          <div class="sidebar-section">
+            <div class="section-title">
+              <span class="caret">&#709;</span>
+              <span>ACTIVE</span>
+            </div>
+            <div class="sidebar-list">
+              <div class="sidebar-item" title="Regression Test Monitor">
+                <span class="item-icon star-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </span>
+                <span>Regression Test Monitor</span>
+              </div>
+              <div class="sidebar-item" title="Flaky Test Detector">
+                <span class="item-icon diamond-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                  </svg>
+                </span>
+                <span>Flaky Test Detector</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inactive Section -->
+          <div class="sidebar-section">
+            <div class="section-title">
+              <span class="caret">&#709;</span>
+              <span>INACTIVE</span>
+            </div>
+            <div class="sidebar-list">
+              <div class="sidebar-item" title="Test Coverage Drift Auditor">
+                <span class="item-icon heart-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </span>
+                <span>Test Coverage Drift Auditor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Bottom Folders -->
+        <div class="sidebar-footer-sections">
+          <div class="footer-section-title">
+            <span class="caret">&#707;</span>
+            <span>OUTLINE</span>
+          </div>
+          <div class="footer-section-title">
+            <span class="caret">&#707;</span>
+            <span>TIMELINE</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Calendar Area -->
+      <main class="content-area">
+        <div class="calendar-container">
+          
+          <!-- Title Row -->
+          <div class="calendar-top">
+            <h1 class="page-title">Agent Schedule</h1>
+          </div>
+
+          <!-- Day Columns - 5 columns -->
+          <div class="weekday-row">
+            <div class="weekday-name">SUN</div>
+            <div class="weekday-name">MON</div>
+            <div class="weekday-name">TUE</div>
+            <div class="weekday-name">WED</div>
+            <div class="weekday-name">THU</div>
+          </div>
+
+          <!-- 5x5 Calendar Grid -->
+          <div class="calendar-grid">
+            
+            <!-- ROW 1 -->
+            <div class="cal-cell">
+              <span class="cal-number">1</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">2</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 2)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">3</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">4</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">5</span>
+            </div>
+
+            <!-- ROW 2 -->
+            <div class="cal-cell">
+              <span class="cal-number">8</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">9</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 9)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">10</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">11</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">12</span>
+              <div class="cal-event-icon diamond-icon" title="Flaky Test Detector (Thu Nov 12)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- ROW 3 -->
+            <div class="cal-cell">
+              <span class="cal-number">15</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">16</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 16)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">17</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">18</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">19</span>
+            </div>
+
+            <!-- ROW 4 -->
+            <div class="cal-cell">
+              <span class="cal-number">22</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">23</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 23)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">24</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">25</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">26</span>
+              <div class="cal-event-icon diamond-icon" title="Flaky Test Detector (Thu Nov 26)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- ROW 5 -->
+            <div class="cal-cell">
+              <span class="cal-number">29</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">30</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 30)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">1</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">2</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">3</span>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+
+      <!-- Right Agent Manager Panel -->
+      <aside class="assistant-panel">
+        
+        <!-- Header -->
+        <div class="assistant-header">
+          <span class="assistant-tab">AGENT MANAGER</span>
+          <div class="assistant-header-actions">
+            <!-- Settings -->
+            <div class="assistant-icon-btn" title="Settings">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+              </svg>
+            </div>
+            <!-- Checklist/tasks -->
+            <div class="assistant-icon-btn" title="Tasks">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </div>
+            <!-- Plus -->
+            <div class="assistant-icon-btn" title="New Session">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+              </svg>
+            </div>
+            <!-- More dots -->
+            <div class="assistant-icon-btn" title="More">
+              <span style="letter-spacing: 0.1em; font-size: 11px;">...</span>
+            </div>
+            <!-- Split panel -->
+            <div class="assistant-icon-btn" title="Split Panel">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm7.5 1v10h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7zM1 3v10a1 1 0 0 0 1 1h4.5V2H2a1 1 0 0 0-1 1z"/>
+              </svg>
+            </div>
+            <!-- Fullscreen -->
+            <div class="assistant-icon-btn" title="Toggle Fullscreen">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+              </svg>
+            </div>
+            <!-- Close -->
+            <div class="assistant-icon-btn" title="Close Panel" onclick="location.href='unguided1.html'">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subheader with Agent Title -->
+        <div class="assistant-subheader">
+          <span>Entitlement Automation Agent</span>
+        </div>
+
+        <!-- Assistant Body -->
+        <div class="assistant-body">
+          
+          <!-- Chat Message Thread -->
+          <div class="chat-messages">
+            <div class="user-bubble">
+              Help me build a new agent that further automates my routine entitlement audit process. I want the agent to be scheduled monthly and I want the agent to notify me throughout the process. I want to create a new script for this.
+            </div>
+            
+            <div class="assistant-bubble">
+              <p>Sounds great. Let’s work through building this new agent together.</p>
+              <p>From your prompt, I’ve confirmed the following instructions.</p>
+              <p>Edit or confirm these instructions and I’ll generate a custom agent template for you.</p>
+            </div>
+
+            <!-- Instructions Card -->
+            <div class="instruction-card">
+              <div class="instruction-row">
+                <div class="instruction-label"><strong>Agent Name:</strong> Entitlement Audit Automator</div>
+                <a href="#" class="instruction-edit">Edit</a>
+              </div>
+              <div class="instruction-row">
+                <div class="instruction-label"><strong>Schedule:</strong> Monthly</div>
+                <a href="#" class="instruction-edit">Edit</a>
+              </div>
+              <div class="instruction-row">
+                <div class="instruction-label"><strong>Notifications:</strong> Enabled at each step</div>
+                <a href="#" class="instruction-edit">Edit</a>
+              </div>
+              <div class="instruction-row">
+                <div class="instruction-label"><strong>Script:</strong> New &mdash; Bob will create one</div>
+                <a href="#" class="instruction-edit">Edit</a>
+              </div>
+              <div class="instruction-row">
+                <div class="instruction-label"><strong>Systems:</strong> Undefined</div>
+                <a href="#" class="instruction-edit">Edit</a>
+              </div>
+            </div>
+
+            <div class="assistant-bubble">
+              <p>Got it, I’m generating a template for you right now.</p>
+              <p>I see you edited the scheduling instructions to “Monthly”.</p>
+              <p>Via your API connections, I can see you last conducted an entitlement audit on October 26th. <strong>I will schedule the new agent for November 26th — one month since your last audit.</strong></p>
+            </div>
+
+            <div class="scope-section">
+              <h2 class="scope-title">Scope</h2>
+              <p class="scope-desc">What systems would you like to audit with this agent? Select all that apply. Bob will only access what you choose here.</p>
+              <div class="scope-list">
+                <div class="scope-option">
+                  <input type="checkbox">
+                  <div>
+                    <strong>Identity provider</strong>
+                    <span>Otka, Azure AD, Google Workspace, etc.</span>
+                  </div>
+                </div>
+                <div class="scope-option">
+                  <input type="checkbox">
+                  <div>
+                    <strong>Code repository teams</strong>
+                    <span>GitHub, GitLab — branch and org permissions</span>
+                  </div>
+                </div>
+                <div class="scope-option">
+                  <input type="checkbox">
+                  <div>
+                    <strong>Cloud Access (IAM)</strong>
+                    <span>AWS, GCP, Azure — roles and policies</span>
+                  </div>
+                </div>
+                <div class="scope-option">
+                  <input type="checkbox">
+                  <div>
+                    <strong>Internal HR or directory system</strong>
+                    <span>Cross-reference active employees vs. active accounts</span>
+                  </div>
+                </div>
+                <div class="scope-option">
+                  <input type="checkbox">
+                  <div>
+                    <strong>Something else</strong>
+                    <input type="text" class="scope-other">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Status Indicator & Prompt Box -->
+          <div class="assistant-footer">
+            
+            <div class="status-indicator">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+              <span>Assessing agentic scope...</span>
+            </div>
+
+            <!-- Chat Prompt Box -->
+            <div class="prompt-container">
+              <textarea class="prompt-input" rows="2" placeholder="Follow up, steer, queue, or cancel."></textarea>
+              <div class="prompt-toolbar">
+                <div class="prompt-tools-left">
+                  <div class="prompt-btn" title="Add File / Context">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+                    </svg>
+                  </div>
+                  <div class="prompt-btn" title="Tools">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                      <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <button class="prompt-stop-btn" title="Stop">
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-badge" title="Git Branch / Remote">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.5 3a2.5 2.5 0 0 1 5 0v3.5a2.5 2.5 0 0 1-5 0V3z"/>
+            <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8z"/>
+          </svg>
+        </span>
+        <span class="status-badge" title="Errors">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0-1A6 6 0 1 0 8 2a6 6 0 0 0 0 12zM7 4h2v5H7V4zm0 6h2v2H7v-2z"/>
+          </svg>
+          <span>0</span>
+        </span>
+        <span class="status-badge" title="Warnings">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.145.145 0 0 1-.066.017H1.146a.145.145 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.71c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+          <span>0</span>
+        </span>
+        <span class="status-badge" title="Bob Findings">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+            <path d="M4 4h8v1H4V4zm0 3h8v1H4V7zm0 3h5v1H4v-1z"/>
+          </svg>
+          <span>Bob Findings</span>
+        </span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    (function () {
+      var body = document.querySelector('.assistant-body');
+      function scrollToBottom() { body.scrollTop = body.scrollHeight; }
+      scrollToBottom();
+      window.addEventListener('load', scrollToBottom);
+      window.addEventListener('resize', scrollToBottom);
+    })();
+
+    setTimeout(function () {
+      location.href = 'unguided9.html';
+    }, 2000);
+  </script>
+
+</body>
+</html>
