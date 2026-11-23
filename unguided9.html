@@ -1423,9 +1423,10 @@
           options[i].querySelector('input[type="checkbox"]').checked = true;
         }
       }
+      setTimeout(typeOther, 1000);
     }, 2000);
 
-    setTimeout(function () {
+    function typeOther() {
       var options = document.querySelectorAll('.scope-option');
       var other = null;
       for (var i = 0; i < options.length; i++) {
@@ -1450,8 +1451,8 @@
             document.querySelector('.generate-template-btn').click();
           }, 2000);
         }
-      }, 30);
-    }, 3000);
+      }, 16);
+    }
   </script>
 
 </body>

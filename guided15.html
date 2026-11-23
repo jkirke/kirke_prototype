@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Symbol | IBM Bob</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #ffffff;
+      color: #000000;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-window {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      background: #ffffff;
+    }
+
+    /* Top Browser/Window Bar */
+    .window-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      padding: 0 16px;
+      background: #fbfbfb;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #8c8c8c;
+    }
+
+    .nav-arrow {
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+
+    .nav-arrow:hover {
+      color: #161616;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 480px;
+      max-width: 40vw;
+      height: 26px;
+      padding: 0 10px;
+      background: #ffffff;
+      border: 1px solid #dfdfdf;
+      border-radius: 6px;
+      color: #6e6e6e;
+      font-size: 12px;
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-family: inherit;
+      font-size: 12px;
+      color: #161616;
+    }
+
+    .window-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6e6e6e;
+    }
+
+    .window-icon-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+    }
+
+    .window-icon-btn:hover {
+      background: #eeeeee;
+      color: #161616;
+    }
+
+    /* Main Window Layout */
+    .window-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Activity Bar */
+    .activity-bar {
+      width: 46px;
+      background: #ffffff;
+      border-right: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 8px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .activity-top-icons, .activity-bottom-icons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .activity-icon {
+      width: 100%;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4b4b4b;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+    }
+
+    .activity-icon:hover {
+      color: #000000;
+    }
+
+    .activity-icon.active {
+      color: #000000;
+    }
+
+    .activity-icon.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #0f62fe;
+    }
+
+    /* Left Sidebar Panel */
+    .sidebar-panel {
+      width: 250px;
+      background: #ffffff;
+      border-right: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .sidebar-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #333333;
+    }
+
+    .sidebar-header .more-dots {
+      cursor: pointer;
+      color: #6e6e6e;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+    }
+
+    .sidebar-section {
+      margin-top: 6px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #333333;
+      cursor: pointer;
+    }
+
+    .section-title .caret {
+      font-size: 9px;
+      color: #555555;
+    }
+
+    .sidebar-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 2px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px 4px 24px;
+      font-size: 12px;
+      color: #222222;
+      cursor: pointer;
+      line-height: 1.4;
+      transition: background 0.1s;
+    }
+
+    .sidebar-item:hover {
+      background: #f4f4f4;
+    }
+
+    .item-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer-sections {
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+    }
+
+    .footer-section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #555555;
+      cursor: pointer;
+    }
+
+    .footer-section-title .caret {
+      font-size: 9px;
+      color: #777777;
+    }
+
+    /* Center Content Area */
+    .content-area {
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+      padding: clamp(16px, 2.8vh, 32px) clamp(18px, 2.5vw, 40px);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 680px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Calendar Header */
+    .calendar-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      margin-bottom: clamp(12px, 2.2vh, 26px);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: clamp(24px, 2.8vw, 36px);
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: -0.02em;
+    }
+
+    /* Weekday Headers - 5 columns */
+    .weekday-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(8px, 1.1vw, 14px);
+      margin-bottom: clamp(6px, 1vh, 12px);
+      text-align: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .weekday-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #333333;
+    }
+
+    /* 5x5 Calendar Grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: clamp(8px, 1.1vw, 14px);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .cal-cell {
+      background: #d8d8d8;
+      border-radius: 3px;
+      min-height: 0;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 8px;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .cal-cell:hover {
+      background: #cecece;
+    }
+
+    .cal-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1;
+    }
+
+    .cal-cell.dimmed .cal-number {
+      color: #888888;
+    }
+
+    .cal-event-icon {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .cal-event-icon:hover {
+      transform: scale(1.15);
+    }
+
+    .star-icon {
+      color: #1c68f3;
+    }
+
+    .diamond-icon {
+      color: #9340ff;
+    }
+
+    .heart-icon {
+      color: #198038;
+    }
+
+    /* Right Agent Manager Panel */
+    .assistant-panel {
+      width: 440px;
+      max-width: 40vw;
+      background: #ffffff;
+      border-left: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .assistant-header {
+      height: 36px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .assistant-tab {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #161616;
+      position: relative;
+      padding: 8px 4px;
+      border-bottom: 2px solid #161616;
+    }
+
+    .assistant-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #6e6e6e;
+    }
+
+    .assistant-icon-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      transition: color 0.15s;
+    }
+
+    .assistant-icon-btn:hover {
+      color: #161616;
+    }
+
+    /* Subheader with Agent Title */
+    .assistant-subheader {
+      padding: 14px 18px 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #161616;
+      flex-shrink: 0;
+    }
+
+    /* Assistant Body / Chat */
+    .assistant-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 18px 18px;
+      overflow-y: auto;
+    }
+
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    /* Summary card */
+    .summary-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      padding: 9px 14px;
+      font-size: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #222222;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row strong {
+      font-weight: 600;
+      color: #000000;
+      margin-right: 4px;
+    }
+
+    .card-copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      color: #8c8c8c;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+
+    .card-copy-btn:hover {
+      color: #161616;
+    }
+
+    /* Assistant bubble */
+    .assistant-bubble {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #161616;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 2px 2px 4px;
+    }
+
+    .assistant-bubble p {
+      margin: 0;
+    }
+
+    /* Symbol section */
+    .symbol-section {
+      border-top: 1px solid #e0e0e0;
+      margin-top: 4px;
+      padding-top: 14px;
+    }
+
+    .symbol-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #161616;
+      margin-bottom: 12px;
+    }
+
+    /* Symbol / Color row with preview circle */
+    .symbol-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .symbol-dropdowns {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dropdown-field {
+      border: 1px solid #c6c6c6;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      font-size: 12.5px;
+      color: #161616;
+      cursor: pointer;
+      background: #ffffff;
+      transition: border-color 0.15s;
+    }
+
+    .dropdown-field:hover {
+      border-color: #8d8d8d;
+    }
+
+    .dropdown-caret {
+      color: #6e6e6e;
+      font-size: 10px;
+    }
+
+    /* Symbol picker panel */
+    .symbol-picker {
+      display: none;
+      border: 1px solid #c6c6c6;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      background: #ffffff;
+      padding: 8px 10px;
+      margin-top: -1px;
+    }
+
+    .symbol-picker.open {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .symbol-option {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #5a5a5a;
+      transition: background 0.1s;
+    }
+
+    .symbol-option:hover {
+      background: #f0f0f0;
+    }
+
+    .symbol-option.selected {
+      background: #e8e8e8;
+    }
+
+    .dropdown-field.open {
+      border-radius: 4px 4px 0 0;
+      border-color: #8d8d8d;
+    }
+
+    /* Color picker panel */
+    .color-picker {
+      display: none;
+      border: 1px solid #c6c6c6;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      background: #ffffff;
+      padding: 8px 10px;
+      margin-top: -1px;
+    }
+
+    .color-picker.open {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .color-row {
+      display: flex;
+      gap: 4px;
+    }
+
+    .color-swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 3px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.1s;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.15);
+    }
+
+    .color-swatch.selected {
+      outline: 2px solid #161616;
+      outline-offset: 1px;
+    }
+
+    .color-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #1a73e8;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Build Agent button */
+    .build-agent-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #1461ff;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 18px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .build-agent-btn:hover {
+      background: #0353e9;
+      transform: translateY(-1px);
+    }
+
+    .build-agent-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Prompt Box */
+    .prompt-container {
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 12px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 84px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .prompt-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: #161616;
+      resize: none;
+      background: transparent;
+      line-height: 1.4;
+    }
+
+    .prompt-input::placeholder {
+      color: #888888;
+    }
+
+    .prompt-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .prompt-tools-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6e6e6e;
+    }
+
+    .prompt-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .prompt-btn:hover {
+      color: #161616;
+    }
+
+    .prompt-send-btn {
+      width: 20px;
+      height: 20px;
+      background: #8d8d8d url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><path d='M8 12.5V3.5M4 7.5l4-4 4 4'/></svg>") center / 12px 12px no-repeat;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .prompt-stop-btn {
+      width: 16px;
+      height: 16px;
+      background: #da1e28;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #555555;
+      padding-left: 4px;
+    }
+
+    /* Tool-use card */
+    .tool-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #161616;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .tool-card:hover {
+      background: #f7f7f7;
+    }
+
+    .tool-card-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-card-label {
+      font-weight: 600;
+      font-size: 11.5px;
+      color: #161616;
+    }
+
+    .tool-card-path {
+      font-size: 11px;
+      color: #555555;
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+    }
+
+    .tool-card-chevron {
+      color: #8c8c8c;
+      font-size: 11px;
+    }
+
+    /* Bottom Status Bar */
+    .status-bar {
+      height: 22px;
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 11px;
+      color: #616161;
+      user-select: none;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .status-badge:hover {
+      color: #161616;
+    }
+    /* Guided callout */
+    .guide-frame {
+      position: fixed;
+      display: none;
+      border: 5px solid #5584f4;
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    .guide-line {
+      position: fixed;
+      display: none;
+      height: 5px;
+      background: #5584f4;
+      transform-origin: 0 50%;
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    .guide-callout {
+      position: fixed;
+      display: none;
+      background: #5584f4;
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 22px 32px 24px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+      pointer-events: none;
+      user-select: none;
+      z-index: 901;
+    }
+
+    .guide-callout .rest {
+      visibility: hidden;
+    }
+
+    .guide-body {
+      font-size: clamp(15px, 1.3vw, 20px);
+      line-height: 1.4;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="app-window">
+
+    <!-- Top Window / Browser Bar -->
+    <header class="window-header">
+      <div class="nav-controls">
+        <span class="nav-arrow" title="Back" onclick="history.back()">&larr;</span>
+        <span class="nav-arrow" title="Forward" onclick="history.forward()">&rarr;</span>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" placeholder="Search" value="Search" readonly>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6e6e6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+
+      <div class="window-actions">
+        <div class="window-icon-btn" title="Toggle Sidebar">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 2.5v11zM2.5 2a.5.5 0 0 0-.5.5V13.5a.5.5 0 0 0 .5.5H5V2H2.5zm3.5 0v12h7.5a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5H6z"/>
+          </svg>
+        </div>
+        <div class="window-icon-btn" title="Toggle Panel">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 2.5v11zM2 10.5V13.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V10.5H2zm12-1V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5V9.5h12z"/>
+          </svg>
+        </div>
+        <div class="window-icon-btn" title="Maximize Window">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1.5 1.5A1.5 1.5 0 0 1 3 0h10a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5H3a1.5 1.5 0 0 1-1.5-1.5v-13zM3 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H3z"/>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- Window Body -->
+    <div class="window-body">
+
+      <!-- Left Activity Bar -->
+      <nav class="activity-bar">
+        <div class="activity-top-icons">
+          <div class="activity-icon active" title="Explorer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Source Control">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="3"></circle>
+              <circle cx="6" cy="6" r="3"></circle>
+              <path d="M6 9v12"></path>
+              <path d="M18 9a9 9 0 0 0-9 9"></path>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Run and Debug">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Bob Chat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Extensions">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="IBM Bob" onclick="location.href='index.html'">
+            <svg width="20" height="20" viewBox="-70 -70 140 140" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt">
+              <path d="M0 -50 V-14 M0 50 V14 M-50 0 H-14 M50 0 H14"/>
+              <path d="M-31 -28 L-10 -7 M31 -28 L10 -7 M-31 28 L-10 7 M31 28 L10 7"/>
+              <path d="M0 -14 L14 0 L0 14 L-14 0 Z"/>
+              <g fill="#ffffff" stroke="currentColor" stroke-width="5">
+                <circle cx="0" cy="-57" r="7"/>
+                <circle cx="0" cy="57" r="7"/>
+                <circle cx="-57" cy="0" r="7"/>
+                <circle cx="57" cy="0" r="7"/>
+                <circle cx="-38" cy="-35" r="7"/>
+                <circle cx="38" cy="-35" r="7"/>
+                <circle cx="-38" cy="35" r="7"/>
+                <circle cx="38" cy="35" r="7"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="activity-bottom-icons">
+          <div class="activity-icon" title="Accounts">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+
+          <div class="activity-icon" title="Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sidebar Panel -->
+      <aside class="sidebar-panel">
+        <div class="sidebar-main">
+          <div class="sidebar-header">
+            <span>AGENTS</span>
+            <span class="more-dots" title="More Actions">...</span>
+          </div>
+
+          <!-- Active Section -->
+          <div class="sidebar-section">
+            <div class="section-title">
+              <span class="caret">&#709;</span>
+              <span>ACTIVE</span>
+            </div>
+            <div class="sidebar-list">
+              <div class="sidebar-item" title="Regression Test Monitor">
+                <span class="item-icon star-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </span>
+                <span>Regression Test Monitor</span>
+              </div>
+              <div class="sidebar-item" title="Flaky Test Detector">
+                <span class="item-icon diamond-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                  </svg>
+                </span>
+                <span>Flaky Test Detector</span>
+              </div>
+              <div class="sidebar-item" id="new-agent-item" title="Entitlement Audit Automator" style="display:none">
+                <span class="item-icon" style="color:#e056a0;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 3 22 21 2 21"/>
+                  </svg>
+                </span>
+                <span>Entitlement Audit Automator</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inactive Section -->
+          <div class="sidebar-section">
+            <div class="section-title">
+              <span class="caret">&#709;</span>
+              <span>INACTIVE</span>
+            </div>
+            <div class="sidebar-list">
+              <div class="sidebar-item" title="Test Coverage Drift Auditor">
+                <span class="item-icon heart-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </span>
+                <span>Test Coverage Drift Auditor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Bottom Folders -->
+        <div class="sidebar-footer-sections">
+          <div class="footer-section-title">
+            <span class="caret">&#707;</span>
+            <span>OUTLINE</span>
+          </div>
+          <div class="footer-section-title">
+            <span class="caret">&#707;</span>
+            <span>TIMELINE</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Calendar Area -->
+      <main class="content-area">
+        <div class="calendar-container">
+
+          <!-- Title Row -->
+          <div class="calendar-top">
+            <h1 class="page-title">Agent Schedule</h1>
+          </div>
+
+          <!-- Day Columns - 5 columns -->
+          <div class="weekday-row">
+            <div class="weekday-name">SUN</div>
+            <div class="weekday-name">MON</div>
+            <div class="weekday-name">TUE</div>
+            <div class="weekday-name">WED</div>
+            <div class="weekday-name">THU</div>
+          </div>
+
+          <!-- 5x5 Calendar Grid -->
+          <div class="calendar-grid">
+
+            <!-- ROW 1 -->
+            <div class="cal-cell">
+              <span class="cal-number">1</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">2</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 2)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">3</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">4</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">5</span>
+            </div>
+
+            <!-- ROW 2 -->
+            <div class="cal-cell">
+              <span class="cal-number">8</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">9</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 9)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">10</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">11</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">12</span>
+              <div class="cal-event-icon diamond-icon" title="Flaky Test Detector (Thu Nov 12)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- ROW 3 -->
+            <div class="cal-cell">
+              <span class="cal-number">15</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">16</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 16)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">17</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">18</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">19</span>
+            </div>
+
+            <!-- ROW 4 -->
+            <div class="cal-cell">
+              <span class="cal-number">22</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">23</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 23)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">24</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">25</span>
+            </div>
+
+            <div class="cal-cell" id="cell-26">
+              <span class="cal-number">26</span>
+              <div style="position:absolute; bottom:8px; left:8px; display:flex; gap:5px; align-items:center;">
+                <div class="cal-event-icon diamond-icon" style="position:static;" title="Flaky Test Detector (Thu Nov 26)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/>
+                  </svg>
+                </div>
+                <div class="cal-event-icon" id="new-cal-event" style="position:static; display:none; color:#e056a0;" title="Entitlement Audit Automator (Thu Nov 26)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 3 22 21 2 21"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROW 5 -->
+            <div class="cal-cell">
+              <span class="cal-number">29</span>
+            </div>
+
+            <div class="cal-cell">
+              <span class="cal-number">30</span>
+              <div class="cal-event-icon star-icon" title="Regression Test Monitor (Mon Nov 30)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="cal-cell dimmed">
+              <span class="cal-number">1</span>
+            </div>
+
+            <div class="cal-cell dimmed">
+              <span class="cal-number">2</span>
+            </div>
+
+            <div class="cal-cell dimmed">
+              <span class="cal-number">3</span>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+
+      <!-- Right Agent Manager Panel -->
+      <aside class="assistant-panel">
+
+        <!-- Header -->
+        <div class="assistant-header">
+          <span class="assistant-tab">AGENT MANAGER</span>
+          <div class="assistant-header-actions">
+            <!-- Settings -->
+            <div class="assistant-icon-btn" title="Settings">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+              </svg>
+            </div>
+            <!-- Checklist/tasks -->
+            <div class="assistant-icon-btn" title="Tasks">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </div>
+            <!-- Plus -->
+            <div class="assistant-icon-btn" title="New Session">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+              </svg>
+            </div>
+            <!-- More dots -->
+            <div class="assistant-icon-btn" title="More">
+              <span style="letter-spacing: 0.1em; font-size: 11px;">...</span>
+            </div>
+            <!-- Split panel -->
+            <div class="assistant-icon-btn" title="Split Panel">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm7.5 1v10h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7zM1 3v10a1 1 0 0 0 1 1h4.5V2H2a1 1 0 0 0-1 1z"/>
+              </svg>
+            </div>
+            <!-- Fullscreen -->
+            <div class="assistant-icon-btn" title="Toggle Fullscreen">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+              </svg>
+            </div>
+            <!-- Close -->
+            <div class="assistant-icon-btn" title="Close Panel" onclick="location.href='unguided1.html'">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subheader with Agent Title -->
+        <div class="assistant-subheader">
+          <span>Entitlement Automation Agent</span>
+        </div>
+
+        <!-- Assistant Body -->
+        <div class="assistant-body">
+
+          <div class="chat-messages">
+
+            <!-- Summary card: Notifications & Report -->
+            <div class="summary-card">
+              <div class="summary-row">
+                <strong>Notifications:</strong> Bob (in-app), Slack
+              </div>
+              <div class="summary-row">
+                <strong>Report Location:</strong> Email, Slack
+              </div>
+              <div class="card-copy-btn" title="Copy">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round">
+                  <rect x="5.5" y="5.5" width="8" height="8" rx="1"/>
+                  <path d="M10.5 3.5v-1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Assistant message -->
+            <div class="assistant-bubble">
+              <p>No issues? Great! Remember you can always ask me to help edit your agents, inquire about agentic behaviors, or review this information at any time.</p>
+              <p>Let&rsquo;s give your Entitlement Audit Automator agent a symbol and a color &mdash; something you can easily recognize on your calendar &mdash; and I&rsquo;ll get to building!</p>
+            </div>
+
+            <!-- Divider -->
+            <div style="border-top: 1px solid #e0e0e0; margin-top: 2px;"></div>
+
+            <!-- Agent Symbol section -->
+            <div class="symbol-section">
+              <div class="symbol-title">Agent Symbol</div>
+              <div class="symbol-row">
+                <div class="symbol-dropdowns">
+                  <div class="dropdown-field" id="symbol-field">
+                    <span>Symbol</span>
+                    <span class="dropdown-caret">&#8679;</span>
+                  </div>
+                  <div class="symbol-picker" id="symbol-picker">
+                    <!-- circle -->
+                    <div class="symbol-option selected" title="Circle">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                    <!-- diamond -->
+                    <div class="symbol-option" title="Diamond">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="1.5" transform="rotate(45 12 12)"/></svg>
+                    </div>
+                    <!-- star -->
+                    <div class="symbol-option" title="Star">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <!-- heart -->
+                    <div class="symbol-option" title="Heart">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </div>
+                    <!-- triangle -->
+                    <div class="symbol-option" title="Triangle">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 3 22 21 2 21"/></svg>
+                    </div>
+                    <!-- hexagon -->
+                    <div class="symbol-option" title="Hexagon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 20.66 7 20.66 17 12 22 3.34 17 3.34 7"/></svg>
+                    </div>
+                    <!-- hexagon variant -->
+                    <div class="symbol-option" title="Hexagon (flat)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="2 12 7 3.34 17 3.34 22 12 17 20.66 7 20.66"/></svg>
+                    </div>
+                  </div>
+                  <div class="dropdown-field" id="color-field">
+                    <span>Color</span>
+                    <span class="dropdown-caret" id="color-caret">&#8679;</span>
+                  </div>
+                  <div class="color-picker" id="color-picker">
+                    <div class="color-row">
+                      <div class="color-swatch" style="background:#7b1a1a" title="#7b1a1a"></div>
+                      <div class="color-swatch" style="background:#6b4c11" title="#6b4c11"></div>
+                      <div class="color-swatch" style="background:#3a4a1a" title="#3a4a1a"></div>
+                      <div class="color-swatch" style="background:#1a4a3a" title="#1a4a3a"></div>
+                      <div class="color-swatch" style="background:#0a3a5a" title="#0a3a5a"></div>
+                      <div class="color-swatch" style="background:#3a1a5a" title="#3a1a5a"></div>
+                      <div class="color-swatch" style="background:#5a1a4a" title="#5a1a4a"></div>
+                      <div class="color-swatch" style="background:#1a1a7a" title="#1a1a7a"></div>
+                    </div>
+                    <div class="color-row">
+                      <div class="color-swatch" style="background:#c0392b" title="#c0392b"></div>
+                      <div class="color-swatch" style="background:#d4850a" title="#d4850a"></div>
+                      <div class="color-swatch" style="background:#27ae60" title="#27ae60"></div>
+                      <div class="color-swatch" style="background:#16a085" title="#16a085"></div>
+                      <div class="color-swatch" style="background:#2980b9" title="#2980b9"></div>
+                      <div class="color-swatch" style="background:#8e44ad" title="#8e44ad"></div>
+                      <div class="color-swatch" style="background:#e91e8c" title="#e91e8c"></div>
+                      <div class="color-swatch" style="background:#1a73e8" title="#1a73e8"></div>
+                    </div>
+                    <div class="color-row">
+                      <div class="color-swatch" style="background:#e74c3c" title="#e74c3c"></div>
+                      <div class="color-swatch" style="background:#f1c40f" title="#f1c40f"></div>
+                      <div class="color-swatch" style="background:#2ecc71" title="#2ecc71"></div>
+                      <div class="color-swatch" style="background:#1abc9c" title="#1abc9c"></div>
+                      <div class="color-swatch" style="background:#9b59b6" title="#9b59b6"></div>
+                      <div class="color-swatch" style="background:#ff69b4" title="#ff69b4"></div>
+                      <div class="color-swatch" style="background:#e056a0" title="#e056a0"></div>
+                      <div class="color-swatch selected" style="background:#1e1e1e" title="#1e1e1e"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="color-preview"></div>
+              </div>
+              <button class="build-agent-btn" id="build-agent-btn" type="button">
+                <span>Build Agent</span>
+                <span>&rarr;</span>
+              </button>
+            </div>
+
+            <!-- Agent build response (hidden until 7s) -->
+            <div class="assistant-bubble" id="build-response" style="display:none; margin-top: 14px;">
+              <p>That symbol looks great.</p>
+              <p>The color and shape combination will help the Entitlement Automation Agent stand out from your other three existing agents.</p>
+              <p>I&rsquo;m going to build this agent. You should see the agent on your calendar in a few moments.</p>
+            </div>
+
+            <!-- Script follow-up message (hidden until 10s) -->
+            <div class="assistant-bubble" id="script-response" style="display:none; margin-top: 2px;">
+              <p>Next, I&rsquo;ll write a script based on: your instructions, the agent template, and the entitlement audit parameters. When I&rsquo;m done, I&rsquo;ll move our conversation to the <em>Explorer</em> page.</p>
+            </div>
+            <div id="script-copy" style="display:none; justify-content:flex-end; color:#6e6e6e; margin-top:4px;">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round">
+                <rect x="5.5" y="5.5" width="8" height="8" rx="1"/>
+                <path d="M10.5 3.5v-1a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1"/>
+              </svg>
+            </div>
+
+            <!-- Wrote file tool card (hidden until 11s) -->
+            <div class="tool-card" id="wrote-file-card" style="display:none;">
+              <div class="tool-card-left">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#555555" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.5 2.5l4 4-1.5 1.5-1-1-5.5 5.5a1.4 1.4 0 0 1-2-2L9 5 8 4z"/>
+                  <path d="M2 14h5"/>
+                </svg>
+                <div>
+                  <div class="tool-card-label">Wrote file</div>
+                  <div class="tool-card-path">/Users/katie/bob/entitlement_audit.py</div>
+                </div>
+              </div>
+              <span class="tool-card-chevron">&#8250;</span>
+            </div>
+
+          </div>
+
+          <!-- Prompt Box -->
+          <div style="margin-top: auto; padding-top: 14px;">
+            <!-- Building status (hidden until 7s) -->
+            <div class="status-indicator" id="building-status" style="visibility:hidden; margin-bottom: 6px;">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;">
+                <path d="M9.5 2.5l4 4-1.5 1.5-1-1-5.5 5.5a1.4 1.4 0 0 1-2-2L9 5 8 4z"/>
+                <path d="M2 14h5"/>
+              </svg>
+              <span>Building your agent...</span>
+            </div>
+            <div class="prompt-container">
+              <textarea class="prompt-input" id="prompt-input" rows="2" placeholder="Follow up, or start new task."></textarea>
+              <div class="prompt-toolbar">
+                <div class="prompt-tools-left">
+                  <div class="prompt-btn" title="Add File / Context">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+                    </svg>
+                  </div>
+                  <div class="prompt-btn" title="Refresh / Redo">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                      <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                    </svg>
+                  </div>
+                </div>
+                <button class="prompt-send-btn" id="prompt-action-btn" title="Send"></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-badge" title="Git Branch / Remote">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.5 3a2.5 2.5 0 0 1 5 0v3.5a2.5 2.5 0 0 1-5 0V3z"/>
+            <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8z"/>
+          </svg>
+        </span>
+        <span class="status-badge" title="Errors">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0-1A6 6 0 1 0 8 2a6 6 0 0 0 0 12zM7 4h2v5H7V4zm0 6h2v2H7v-2z"/>
+          </svg>
+          <span>0</span>
+        </span>
+        <span class="status-badge" title="Warnings">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.145.145 0 0 1-.066.017H1.146a.145.145 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.71c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+          <span>0</span>
+        </span>
+        <span class="status-badge" title="Bob Findings">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+            <path d="M4 4h8v1H4V4zm0 3h8v1H4V7zm0 3h5v1H4v-1z"/>
+          </svg>
+          <span>Bob Findings</span>
+        </span>
+      </div>
+    </footer>
+
+  </div>
+
+  <div class="guide-frame" id="guide-frame"></div>
+  <div class="guide-line" id="guide-line"></div>
+  <div class="guide-callout" id="guide-callout">
+    <div class="guide-body" data-text="Let&rsquo;s choose a shape visually distinct from the existing agents."></div>
+  </div>
+
+  <script>
+    // Keep the chat's vertical scrollbar pinned to the bottom whenever content changes.
+    (function () {
+      var body = document.querySelector('.assistant-body');
+      function scrollToBottom() { body.scrollTop = body.scrollHeight; }
+      new MutationObserver(scrollToBottom).observe(body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true
+      });
+      scrollToBottom();
+      window.addEventListener('load', scrollToBottom);
+      window.addEventListener('resize', scrollToBottom);
+    })();
+
+
+    // Opens the Symbol dropdown and selects the triangle (triggered by the first guide click).
+    function runSymbolSteps() {
+      document.getElementById('symbol-field').classList.add('open');
+      document.getElementById('symbol-picker').classList.add('open');
+      setTimeout(function () {
+        // Move selection to triangle (index 4)
+        var options = document.querySelectorAll('.symbol-option');
+        options.forEach(function (o) { o.classList.remove('selected'); });
+        options[4].classList.add('selected');
+
+        // Swap preview from circle to triangle
+        var preview = document.querySelector('.color-preview');
+        preview.style.borderRadius = '0';
+        preview.style.background = 'transparent';
+        preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#1a73e8"/></svg>';
+      }, 1000);
+    }
+
+    // Slow-type the assistant message, then show the first guide.
+    (function () {
+      var paras = Array.prototype.slice.call(document.querySelectorAll('.assistant-bubble')[0].querySelectorAll('p'));
+      var items = paras.map(function (p) {
+        var text = p.textContent;
+        p.textContent = '';
+        return { el: p, text: text };
+      });
+      var i = 0, j = 0;
+      var typer = setInterval(function () {
+        if (i >= items.length) {
+          clearInterval(typer);
+          setTimeout(showGuide, 1000);
+          return;
+        }
+        items[i].el.textContent += items[i].text.charAt(j);
+        j++;
+        if (j >= items[i].text.length) { i++; j = 0; }
+      }, 16);
+    })();
+
+    // Opens the Color dropdown and selects pink (triggered by the first click on the color guide).
+    function runColorSteps() {
+      document.getElementById('color-field').classList.add('open');
+      document.getElementById('color-caret').innerHTML = '&#8681;';
+      document.getElementById('color-picker').classList.add('open');
+      setTimeout(function () {
+        // Move selection to pink swatch (row 3, index 6 = overall index 22)
+        var swatches = document.querySelectorAll('.color-swatch');
+        swatches.forEach(function (s) { s.classList.remove('selected'); });
+        swatches[22].classList.add('selected');
+
+        // Update triangle preview to pink
+        var preview = document.querySelector('.color-preview');
+        preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#e056a0"/></svg>';
+      }, 1000);
+    }
+
+    function runSteps() {
+    // Each step runs after its own wait (in ms) following the previous step.
+    var steps = [
+      [1000, buildStep]
+    ];
+    var s = 0;
+    function next() {
+      if (s >= steps.length) return;
+      var step = steps[s++];
+      setTimeout(function () { step[1](); next(); }, step[0]);
+    }
+    next();
+
+    function buildStep() {
+      // Hide Build Agent button
+      document.getElementById('build-agent-btn').style.display = 'none';
+
+      // Show assistant response message
+      var buildResponse = document.getElementById('build-response');
+      var buildItems = Array.prototype.map.call(buildResponse.querySelectorAll('p'), function (p) {
+        var text = p.textContent;
+        p.textContent = '';
+        return { el: p, text: text };
+      });
+      buildResponse.style.display = 'flex';
+      var bi = 0, bj = 0;
+      var buildTyper = setInterval(function () {
+        if (bi >= buildItems.length) {
+          clearInterval(buildTyper);
+          runBuildSteps();
+          return;
+        }
+        buildItems[bi].el.textContent += buildItems[bi].text.charAt(bj);
+        bj++;
+        if (bj >= buildItems[bi].text.length) { bi++; bj = 0; }
+      }, 16);
+
+      // Show "Building your agent..." status
+      document.getElementById('building-status').style.visibility = 'visible';
+
+      // Update prompt placeholder
+      document.getElementById('prompt-input').placeholder = 'Follow up, steer, queue, or cancel.';
+
+      // Swap send button to stop button
+      var btn = document.getElementById('prompt-action-btn');
+      btn.className = 'prompt-stop-btn';
+      btn.title = 'Stop';
+    }
+
+    // Remaining steps run relative to when the build response finishes typing.
+    function runBuildSteps() {
+      setTimeout(function () {
+        // Add new agent to sidebar ACTIVE list
+        document.getElementById('new-agent-item').style.display = 'flex';
+
+      setTimeout(function () {
+        // Show pink triangle on calendar cell 26
+        document.getElementById('new-cal-event').style.display = 'flex';
+
+        // Update status text
+        document.querySelector('#building-status span').textContent = 'Scheduling your agent...';
+
+      setTimeout(function () {
+        // Show script follow-up message and copy icon, slow-typing the message
+        var scriptP = document.querySelector('#script-response p');
+        var scriptHtml = scriptP.innerHTML;
+        scriptP.innerHTML = '';
+        document.getElementById('script-response').style.display = 'flex';
+        document.getElementById('script-copy').style.display = 'flex';
+
+        // Update status text
+        document.querySelector('#building-status span').textContent = 'Writing your script...';
+
+        // Type character by character, appending HTML tags (e.g. <em>) whole
+        var pos = 0;
+        var scriptTyper = setInterval(function () {
+          if (scriptHtml.charAt(pos) === '<') {
+            pos = scriptHtml.indexOf('>', pos) + 1;
+          } else if (scriptHtml.charAt(pos) === '&') {
+            pos = scriptHtml.indexOf(';', pos) + 1;
+          } else {
+            pos++;
+          }
+          scriptP.innerHTML = scriptHtml.substring(0, pos);
+          if (pos >= scriptHtml.length) {
+            clearInterval(scriptTyper);
+            setTimeout(function () {
+              // Show wrote-file tool card
+              document.getElementById('wrote-file-card').style.display = 'flex';
+
+              // Update status text (italic via innerHTML)
+              document.querySelector('#building-status span').innerHTML = 'Moving to the <em>Explorer</em> page...';
+
+              // Wait 2 seconds, then proceed to the next page
+              setTimeout(function () {
+                location.href = 'guided16.html';
+              }, 2000);
+            }, 1000);
+          }
+        }, 16);
+      }, 1000);
+      }, 1000);
+      }, 1000);
+    }
+    }
+  </script>
+
+  <script>
+    // Guided callout: shown 1s after the assistant message finishes typing.
+    // Click 1: opens the Symbol dropdown and selects the triangle (guide stays up).
+    // Click 2: dismisses the guide and immediately shows the Color guide.
+    // Click 3: opens the Color dropdown and selects pink (guide stays up).
+    // Click 4: dismisses the guide and resumes the automated build steps.
+    (function () {
+      var body = document.querySelector('.assistant-body');
+      var guideVisible = false;
+      var guideTimer = null;
+      var guideClicks = 0;
+      var targetId = 'symbol-field';
+
+      function positionGuide() {
+        var frame = document.getElementById('guide-frame');
+        var line = document.getElementById('guide-line');
+        var callout = document.getElementById('guide-callout');
+        var r0 = document.getElementById(targetId).getBoundingClientRect();
+        var pad = 3;
+        var r = { left: r0.left - pad, top: r0.top - pad, width: r0.width + pad * 2, height: r0.height + pad * 2 };
+
+        frame.style.left = r.left + 'px';
+        frame.style.top = r.top + 'px';
+        frame.style.width = r.width + 'px';
+        frame.style.height = r.height + 'px';
+
+        var width = Math.max(280, Math.min(window.innerWidth * 0.22, 380));
+        callout.style.width = width + 'px';
+        callout.style.left = Math.max(12, r.left - 60 - width) + 'px';
+        var ch = callout.getBoundingClientRect().height;
+        var midY = r.top + r.height / 2;
+        callout.style.top = (midY - ch / 2) + 'px';
+
+        var cr = callout.getBoundingClientRect();
+        var x1 = cr.right;
+        var x2 = r.left + 2;
+        var y1c = Math.min(Math.max(midY, cr.top + 20), cr.bottom - 20);
+        var dx = x2 - x1;
+        var dy = midY - y1c;
+        line.style.left = x1 + 'px';
+        line.style.top = (y1c - 2.5) + 'px';
+        line.style.width = Math.sqrt(dx * dx + dy * dy) + 'px';
+        line.style.transform = 'rotate(' + Math.atan2(dy, dx) + 'rad)';
+      }
+
+      window.showGuide = function () {
+        var el = document.querySelector('#guide-callout .guide-body');
+        var text = el.getAttribute('data-text');
+        guideVisible = true;
+        document.getElementById('guide-frame').style.display = 'block';
+        document.getElementById('guide-line').style.display = 'block';
+        document.getElementById('guide-callout').style.display = 'block';
+
+        // Reserve final layout with hidden text, then reveal it character by character.
+        el.innerHTML = '<span class="typed"></span><span class="rest"></span>';
+        el.querySelector('.rest').textContent = text;
+        positionGuide();
+
+        var charIndex = 0;
+        guideTimer = setInterval(function () {
+          charIndex++;
+          el.querySelector('.typed').textContent = text.substring(0, charIndex);
+          el.querySelector('.rest').textContent = text.substring(charIndex);
+          if (charIndex >= text.length) clearInterval(guideTimer);
+        }, 16);
+      };
+
+      function dismissGuide() {
+        guideVisible = false;
+        clearInterval(guideTimer);
+        ['guide-frame', 'guide-line', 'guide-callout'].forEach(function (id) {
+          document.getElementById(id).style.display = 'none';
+        });
+      }
+
+      window.addEventListener('resize', function () { if (guideVisible) positionGuide(); });
+      body.addEventListener('scroll', function () { if (guideVisible) positionGuide(); });
+
+      // Clicks drive the guide (nav controls still work).
+      document.addEventListener('click', function (e) {
+        if (!guideVisible) return;
+        if (e.target.closest('.activity-icon') || e.target.closest('.nav-arrow') || e.target.closest('.assistant-icon-btn')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        guideClicks++;
+        if (guideClicks === 1) {
+          runSymbolSteps();
+        } else if (guideClicks === 2) {
+          dismissGuide();
+          targetId = 'color-field';
+          document.querySelector('#guide-callout .guide-body').setAttribute('data-text', 'Let\u2019s choose a color visually distinct from the existing agents.');
+          showGuide();
+        } else if (guideClicks === 3) {
+          runColorSteps();
+        } else {
+          dismissGuide();
+          runSteps();
+        }
+      }, true);
+    })();
+  </script>
+
+</body>
+</html>

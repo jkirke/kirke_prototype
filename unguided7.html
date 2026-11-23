@@ -1301,6 +1301,9 @@
     var typer = setInterval(function () {
       if (n >= nodes.length) {
         clearInterval(typer);
+        setTimeout(function () {
+          location.href = 'unguided8.html';
+        }, 2000);
         return;
       }
       if (c < texts[n].length) {
@@ -1310,13 +1313,7 @@
         n++;
         c = 0;
       }
-    }, 30);
-  </script>
-
-  <script>
-    setTimeout(function () {
-      location.href = 'unguided8.html';
-    }, 5000);
+    }, 16);
   </script>
 
 </body>

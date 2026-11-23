@@ -236,7 +236,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-l
   var NEXT_DELAY=1000; // ms between the reply and the run message
   var REPLY_DELAY=2000; // ms after the message is sent
   var INPUT_DELAY=2000; // ms after the agent message finishes
-  var SPEED=55; // base ms per character
+  var SPEED=16; // ms per character
   var msgs=document.querySelector('.msgs'),sb=document.querySelector('.sb'),agEl=document.querySelector('.ag');
   function toEnd(){
     msgs.scrollTop=msgs.scrollHeight;
@@ -256,13 +256,11 @@ svg{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-l
       var c=t.charAt(i++);
       el.textContent=t.slice(0,i);
       toEnd();
-      var d=SPEED+Math.random()*50;
-      if(c==='.'||c==='!'||c==='?')d+=350; else if(c===',')d+=180;
-      setTimeout(step,d);
+      setTimeout(step,SPEED);
     })();
   }
   function run(n){
-    if(n<els.length) setTimeout(function(){type(els[n],function(){run(n+1);});},n?700:1200);
+    if(n<els.length) setTimeout(function(){type(els[n],function(){run(n+1);});},1000);
     else setTimeout(function(){ph.style.display='none';type(ut,function(){
       setTimeout(function(){
         var b=document.getElementById('bub');
@@ -277,7 +275,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-l
               var r2=document.getElementById('rep2'),r3=document.getElementById('rep3');
               r2.style.display='block';toEnd();
               type(r2,function(){
-                setTimeout(function(){r3.style.display='block';toEnd();type(r3,function(){setTimeout(function(){window.location.href='index.html';},RETURN_DELAY);});},700);
+                setTimeout(function(){r3.style.display='block';toEnd();type(r3,function(){setTimeout(function(){window.location.href='index.html';},RETURN_DELAY);});},1000);
               });
             },NEXT_DELAY);
           });

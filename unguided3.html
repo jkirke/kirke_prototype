@@ -1157,7 +1157,7 @@
     var isFinished = false;
 
     window.addEventListener('DOMContentLoaded', function() {
-      setTimeout(startAssistantTyping, 400);
+      setTimeout(startAssistantTyping, 1000);
     });
 
     function startAssistantTyping() {
@@ -1173,7 +1173,7 @@
           isFinished = true;
           setTimeout(function() {
             location.href = 'unguided4.html';
-          }, 1200);
+          }, 1000);
           return;
         }
         currentP = document.createElement('p');
@@ -1188,10 +1188,10 @@
         if (charIndex < text.length) {
           currentP.textContent += text.charAt(charIndex);
           charIndex++;
-          setTimeout(typeChar, 14);
+          setTimeout(typeChar, 16);
         } else {
           pIndex++;
-          setTimeout(createNextParagraph, 160);
+          setTimeout(createNextParagraph, 1000);
         }
       }
 
@@ -1211,7 +1211,7 @@
         });
         setTimeout(function() {
           location.href = 'unguided4.html';
-        }, 800);
+        }, 1000);
       } else {
         location.href = 'unguided4.html';
       }

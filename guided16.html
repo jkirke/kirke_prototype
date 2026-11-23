@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>entitlement_audit.py — Bob</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#2b2b2b;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{padding:4px}
+.win{display:flex;flex-direction:column;height:100%;background:#fff;border-radius:6px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#1f1f1f}
+svg{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+/* top bar */
+.top{height:42px;flex-shrink:0;position:relative;background:#f8f8f8}
+.top>*{position:absolute;top:50%;transform:translateY(-50%)}
+.top .nav{display:flex;gap:14px;color:#9a9a9a;left:578px}
+.top .nav svg{width:18px;height:18px}
+.search{left:645px;width:692px;height:26px;border:1px solid #d6d6d6;border-radius:6px;background:#fff;font-size:13.5px;padding:0 10px;display:flex;align-items:center}
+.top .right{display:flex;gap:16px;color:#333;align-items:center;left:1350px;right:14px;justify-content:space-between}
+.top .right svg{width:18px;height:18px}
+.body{flex:1;display:flex;min-height:0;border-top:1px solid #e6e6e6}
+/* activity */
+.act{width:55px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:8px 0;background:#f8f8f8;border-right:1px solid #e6e6e6;color:#555}
+.act div{display:flex;flex-direction:column;gap:20px;align-items:center}
+.act svg{width:26px;height:26px;stroke-width:1.3}
+/* explorer */
+.exp{width:355px;flex-shrink:0;background:#f8f8f8;border-right:1px solid #e6e6e6;display:flex;flex-direction:column;font-size:13px}
+.exp .h{display:flex;justify-content:space-between;padding:14px 20px 0 25px;font-size:12.5px;letter-spacing:.2px;color:#444;height:34px}
+.exp .ws{font-weight:700;margin:0 0 0 12px;padding-top:6px;font-size:12.5px;display:flex;gap:8px;align-items:center}
+.exp .row{display:flex;align-items:center;gap:6px;height:23px;color:#333}
+.exp .sp{flex:1}
+.exp .bot{border-top:1px solid #e6e6e6;font-weight:700;font-size:12.5px}
+.exp .bot div{height:26px;display:flex;align-items:center;gap:8px;padding-left:12px}
+.pyi{width:13px;height:13px;stroke:none}
+/* editor */
+.ed{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;border-right:1px solid #e6e6e6}
+.tabs{height:46px;flex-shrink:0;background:#f8f8f8;display:flex}
+.tab{display:flex;align-items:center;gap:8px;padding:0 12px 0 10px;background:#fff;font-style:italic;font-size:15px;color:#333;border-right:1px solid #e6e6e6;border-bottom:0}
+.tab .x{font-style:normal;font-size:15px;margin-left:6px;color:#333}
+.crumbs{height:24px;display:flex;align-items:center;gap:6px;padding:0 6px 0 7px;font-size:14.5px;color:#444;flex-shrink:0;border-bottom:1px solid #f0f0f0}
+.crumbs .sep{color:#777}
+.lines{flex:1;overflow:hidden;font-family:Menlo,"SF Mono",Monaco,Consolas,"Courier New",monospace;font-size:12.7px;line-height:21.5px}
+.lines .ln:first-child{margin-top:-21px}
+.ln{display:flex;height:21.5px}
+.ln.hl{background:#f6f6f6}
+.num{width:34px;flex-shrink:0;text-align:right;color:#666;margin-left:12px;margin-right:30px}
+.ln.hl .num{color:#111}
+.code{flex:1;white-space:pre}
+.k{color:#c800c8}
+.f{color:#7c3aed}
+.t{color:#1a9a9a}
+.t2{color:#0b6bd6}
+.s,.s2{color:#1f2d5a}
+.v{color:#0b5fd0}
+.pr{color:#8a6d00}
+.n{color:#0e8a5f}
+.b{color:#0b50e0}
+.p{color:#169a16}
+.d{color:#0a3dc4}
+.e{color:#c4001a}
+.c{color:#6a737d}
+.u{text-decoration:underline;color:#1f2d5a}
+.cmt .code{flex:none;width:85ch;display:flex;align-items:center;gap:1ch}
+.rule{flex:1;height:1px;background:#bbb}
+/* agent */
+.ag{width:37%;min-width:420px;flex-shrink:0;display:flex;flex-direction:column;background:#fff;position:relative}
+.ag .hd{height:34px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 14px 0 23px;flex-shrink:0}
+.ag .hd .t1{font-size:12px;font-weight:500;letter-spacing:.3px;border-bottom:1.5px solid #222;padding-bottom:4px;height:22px}
+.ag .hd .ic{display:flex;gap:14px;color:#444;padding-bottom:4px}
+.ag .hd svg{width:16px;height:16px}
+.ag h2{font-size:18.5px;font-weight:600;padding:20px 22px 14px 22px;color:#222}
+.ag .msgs{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:0 40px 0 56px;font-size:14.2px;line-height:19.5px;color:#222;border-top:1px solid #f1f1f1;margin:0 22px 0 0;padding-top:18px;padding-left:34px;padding-bottom:12px}
+.ag .msgs::-webkit-scrollbar{display:none}
+.ag .msgs p{margin-bottom:19.5px}
+.wrote{display:flex;gap:14px;align-items:flex-start;margin:6px 0 24px 8px;color:#444;font-size:14.2px;position:relative}
+.wrote svg{width:15px;height:15px;margin-top:2px;stroke:#888}
+.wrote small{display:block;font-size:13.7px;color:#555;margin-top:5px}
+.wrote .ch{position:absolute;left:300px;top:8px;color:#666}
+.sp1{display:none}
+.fin{display:flex;align-items:center;gap:16px;padding:0 0 12px 20px;font-size:14.5px;color:#333}
+.fin svg{width:22px;height:22px;stroke:#444}
+.inp{margin:0 14px 52px 22px;border:1px solid #e3e3e3;border-radius:12px;height:140px;position:relative;padding:14px 18px;font-size:14.5px;color:#777}
+.inp .b1{position:absolute;left:10px;bottom:10px;width:30px;height:30px;border-radius:50%;background:#efefef;display:flex;align-items:center;justify-content:center;color:#333;font-size:20px}
+.inp .b2{position:absolute;left:54px;bottom:16px;color:#444}
+.inp .b2 svg{width:17px;height:17px}
+.inp .stop{position:absolute;right:10px;bottom:10px;width:30px;height:30px;border-radius:50%;background:#efefef}
+.inp .stop i{position:absolute;left:8px;top:8px;width:14px;height:14px;background:#d4121e;border-radius:3px}
+.sb{position:absolute;right:6px;top:645px;width:8px;height:75px;border-radius:4px;background:#e0e0e0}
+.typed.active::after,.ut.active::after,.rep.active::after{content:"";display:inline-block;width:2px;height:15px;margin-left:1px;vertical-align:-2px;background:#222;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.ut{color:#222}
+.rep{margin:19.5px 0 0 0}
+.bub{background:#dce8fb;border-radius:8px;padding:13px 14px;margin:8px 0 0 -10px;color:#1b1b1b}
+/* status */
+.st{height:28px;flex-shrink:0;background:#f3f3f3;border-top:1px solid #e6e6e6;display:flex;align-items:center;gap:18px;padding:0 14px;font-size:13.5px;color:#444}
+/* guided callout */
+.guide-frame{position:fixed;display:none;border:5px solid #5584f4;border-radius:12px;pointer-events:none;z-index:900}
+.guide-line{position:fixed;display:none;height:5px;background:#5584f4;transform-origin:0 50%;pointer-events:none;z-index:900}
+.guide-callout{position:fixed;display:none;background:#5584f4;color:#fff;border-radius:18px;padding:22px 32px 24px;box-shadow:0 6px 16px rgba(0,0,0,.22);pointer-events:none;user-select:none;z-index:901}
+.guide-callout .rest{visibility:hidden}
+.guide-body{font-size:clamp(15px,1.3vw,20px);line-height:1.4;white-space:pre-line}
+/* end dialog */
+.end-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:1000;font-family:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif}
+.end-card{width:62%;max-width:1240px;background:#fafafc;border-radius:28px;padding:130px 40px 70px;text-align:center;color:#000}
+.end-card h1{font-size:clamp(36px,3.5vw,68px);font-weight:700;color:#0f62fe;line-height:1.1}
+.end-card h2{font-size:clamp(20px,1.9vw,36px);font-weight:700;margin-top:clamp(40px,4.5vw,90px)}
+.end-card p{font-size:clamp(16px,1.5vw,26px);font-style:italic;margin-top:clamp(16px,1.6vw,28px)}
+.end-card button{margin-top:clamp(50px,5vw,100px);background:#0f62fe;color:#fff;border:0;border-radius:24px;font:700 clamp(22px,2.1vw,38px) "IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;padding:.45em 1.3em;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="top">
+    <div class="nav"><svg viewBox="0 0 16 16"><path d="M13 8H3M7 4L3 8l4 4"/></svg><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+    <div class="search">Search</div>
+    <div class="right">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c-2 2-2 10 0 12M8 2c2 2 2 10 0 12"/></svg>
+      <span style="width:380px"></span>
+      <svg viewBox="0 0 16 16"><rect x="1.500" y="2" width="5" height="5"/><rect x="9" y="2" width="5.500" height="5"/><rect x="1.500" y="9" width="5" height="5"/><rect x="9" y="9" width="5.500" height="5"/></svg>
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M6 2v12"/></svg>
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M2 10h12"/></svg>
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M10 2v12"/></svg>
+    </div>
+  </div>
+  <div class="body">
+    <div class="act">
+      <div>
+        <svg viewBox="0 0 24 24"><path d="M9 3h7l4 4v11H9zM5 7v14h11"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M14.500 14.500L21 21"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="17" cy="9" r="2"/><path d="M6 7v10M17 11c0 4-6 3-11 6"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M9 4l10 6-10 6zM5 14l-2 5h5"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="11" rx="1.500"/><circle cx="17" cy="17" r="4" fill="#fff"/><path d="M8 20h4"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="3" y="9" width="6" height="6"/><rect x="9" y="3" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5M5.500 5.500l3.500 3.500M15 15l3.500 3.500M18.500 5.500L15 9M9 15l-3.500 3.500"/></svg>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 19c1-4 11-4 12 0"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2l2 3 3-1 1 3 3 1-1 3 3 2-3 2 1 3-3 1-1 3-3-1-2 3-2-3-3 1-1-3-3-1 1-3-3-2 3-2-1-3 3-1 1-3 3 1z"/></svg>
+      </div>
+    </div>
+    <div class="exp">
+      <div class="h"><span>EXPLORER</span><span>···</span></div>
+      <div class="ws"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>UNTITLED (WORKSPACE)</div>
+      <div class="row" style="padding-left:20px"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>scripts</div>
+      <div class="row" style="padding-left:34px;gap:7px"><svg class="pyi" viewBox="0 0 16 16"><path d="M8 1c-3 0-3 1-3 2v2h3v1H3c-1.500 0-2 1-2 3s.5 3 2 3h1.500V10c0-1 1-2 2-2h3c1 0 2-1 2-2V3c0-1-1-2-3.500-2z" fill="#3572a5"/><path d="M8 15c3 0 3-1 3-2v-2H8v-1h5c1.500 0 2-1 2-3s-.5-3-2-3h-1.500V6c0 1-1 2-2 2h-3c-1 0-2 1-2 2v3c0 1 1 2 3.500 2z" fill="#f5c63a"/></svg>entitlement_audit.py</div>
+      <div class="sp"></div>
+      <div class="bot"><div><svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg>OUTLINE</div><div style="height:24px"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg>TIMELINE</div></div>
+    </div>
+    <div class="ed">
+      <div class="tabs"><div class="tab"><svg class="pyi" viewBox="0 0 16 16"><path d="M8 1c-3 0-3 1-3 2v2h3v1H3c-1.500 0-2 1-2 3s.5 3 2 3h1.500V10c0-1 1-2 2-2h3c1 0 2-1 2-2V3c0-1-1-2-3.500-2z" fill="#3572a5"/><path d="M8 15c3 0 3-1 3-2v-2H8v-1h5c1.500 0 2-1 2-3s-.5-3-2-3h-1.500V6c0 1-1 2-2 2h-3c-1 0-2 1-2 2v3c0 1 1 2 3.500 2z" fill="#f5c63a"/></svg><span>entitlement_audit.py</span><span class="x">✕</span></div></div>
+      <div class="crumbs"><span>bob</span><span class="sep">›</span><svg class="pyi" viewBox="0 0 16 16"><path d="M8 1c-3 0-3 1-3 2v2h3v1H3c-1.500 0-2 1-2 3s.5 3 2 3h1.500V10c0-1 1-2 2-2h3c1 0 2-1 2-2V3c0-1-1-2-3.500-2z" fill="#3572a5"/><path d="M8 15c3 0 3-1 3-2v-2H8v-1h5c1.500 0 2-1 2-3s-.5-3-2-3h-1.500V6c0 1-1 2-2 2h-3c-1 0-2 1-2 2v3c0 1 1 2 3.500 2z" fill="#f5c63a"/></svg><span>entitlement_audit.py</span></div>
+      <div class="lines">
+<div class="ln"><span class="num">5</span><span class="code"><span class="d">Managed by IBM Bob  |  Workflow: Cloud Entitlement V2</span></span></div>
+<div class="ln"><span class="num">6</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">7</span><span class="code"><span class="d">This script is a prototype artefact demonstrating an agentic intervention</span></span></div>
+<div class="ln"><span class="num">8</span><span class="code"><span class="d">that audits provisioned cloud services against approved resource allocations.</span></span></div>
+<div class="ln"><span class="num">9</span><span class="code"><span class="d">It does not execute real API calls.</span></span></div>
+<div class="ln"><span class="num">10</span><span class="code"><span class="d">&quot;&quot;&quot;</span></span></div>
+<div class="ln"><span class="num">11</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">12</span><span class="code"><span class="k">import</span> json</span></div>
+<div class="ln"><span class="num">13</span><span class="code"><span class="k">import</span> time</span></div>
+<div class="ln"><span class="num">14</span><span class="code"><span class="k">from</span> datetime <span class="k">import</span> datetime, timezone</span></div>
+<div class="ln"><span class="num">15</span><span class="code"><span class="k">from</span> typing <span class="k">import</span> Any</span></div>
+<div class="ln"><span class="num">16</span><span class="code">&nbsp;</span></div>
+<div class="ln cmt"><span class="num">17</span><span class="code"><span class="c"># — Configuration </span><span class="rule"></span></span></div>
+<div class="ln"><span class="num">18</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">19</span><span class="code"><span class="v">AUDIT_CONFIG</span> = <span class="p">{</span></span></div>
+<div class="ln"><span class="num">20</span><span class="code">    <span class="s">&quot;catalog_endpoint&quot;</span>: <span class="s">&quot;</span><span class="u">https://resource-catalog.cloud.ibm.com/api/v1/resources</span><span class="s">&quot;</span>,</span></div>
+<div class="ln"><span class="num">21</span><span class="code">    <span class="s">&quot;entitlement_registry&quot;</span>: <span class="s">&quot;</span><span class="u">https://entitlements.cloud.ibm.com/v2/allocations</span><span class="s">&quot;</span>,</span></div>
+<div class="ln"><span class="num">22</span><span class="code">    <span class="s">&quot;iam_endpoint&quot;</span>: <span class="s">&quot;</span><span class="u">https://iam.cloud.ibm.com/identity/token</span><span class="s">&quot;</span>,</span></div>
+<div class="ln"><span class="num">23</span><span class="code">    <span class="s">&quot;target_account_id&quot;</span>: <span class="s">&quot;acct-8f3a1c92-4d71-4e88-b20d-cc9e17f04a1b&quot;</span>,</span></div>
+<div class="ln"><span class="num">24</span><span class="code">    <span class="s">&quot;approved_services&quot;</span>: <span class="p">[</span></span></div>
+<div class="ln"><span class="num">25</span><span class="code">        <span class="s">&quot;ibm-cloud-databases-for-postgresql&quot;</span>,</span></div>
+<div class="ln"><span class="num">26</span><span class="code">        <span class="s">&quot;cloud-object-storage&quot;</span>,</span></div>
+<div class="ln"><span class="num">27</span><span class="code">        <span class="s">&quot;watson-machine-learning&quot;</span>,</span></div>
+<div class="ln"><span class="num">28</span><span class="code">        <span class="s">&quot;event-streams&quot;</span>,</span></div>
+<div class="ln"><span class="num">29</span><span class="code">        <span class="s">&quot;key-protect&quot;</span>,</span></div>
+<div class="ln"><span class="num">30</span><span class="code">        <span class="s">&quot;vpc-infrastructure&quot;</span>,</span></div>
+<div class="ln"><span class="num">31</span><span class="code">    <span class="p">]</span>,</span></div>
+<div class="ln"><span class="num">32</span><span class="code">    <span class="s">&quot;max_drift_threshold_pct&quot;</span>: <span class="n">15.0</span>,</span></div>
+<div class="ln"><span class="num">33</span><span class="code">    <span class="s">&quot;notify_slack_channel&quot;</span>: <span class="s">&quot;#infra-entitlements&quot;</span>,</span></div>
+<div class="ln"><span class="num">34</span><span class="code">    <span class="s">&quot;dry_run&quot;</span>: <span class="b">False</span>,</span></div>
+<div class="ln hl"><span class="num">35</span><span class="code"><span class="p">}</span></span></div>
+<div class="ln"><span class="num">36</span><span class="code">&nbsp;</span></div>
+<div class="ln cmt"><span class="num">37</span><span class="code"><span class="c"># — Fake IAM Token Exchange </span><span class="rule"></span></span></div>
+<div class="ln"><span class="num">38</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">39</span><span class="code"><span class="k">def</span> <span class="f">get_iam_token</span><span class="t2">(</span>api_key: <span class="t">str</span><span class="t2">)</span> -&gt; <span class="t">str</span>:</span></div>
+<div class="ln"><span class="num">40</span><span class="code">    <span class="d">&quot;&quot;&quot;</span></span></div>
+<div class="ln"><span class="num">41</span><span class="code">    <span class="d">Exchange an IBM Cloud API key for a short-lived IAM bearer token.</span></span></div>
+<div class="ln"><span class="num">42</span><span class="code">    <span class="d">(Prototype: returns a static placeholder token.)</span></span></div>
+<div class="ln"><span class="num">43</span><span class="code">    <span class="d">&quot;&quot;&quot;</span></span></div>
+<div class="ln"><span class="num">44</span><span class="code">    <span class="pr">print</span><span class="t2">(</span><span class="s2">&quot;[AUTH]  Requesting IAM token from&quot;</span>, <span class="v">AUDIT_CONFIG</span><span class="t2">[</span><span class="s2">&quot;iam_endpoint&quot;</span><span class="t2">]</span><span class="t2">)</span></span></div>
+<div class="ln"><span class="num">45</span><span class="code">    time.<span class="v">sleep</span><span class="t2">(</span><span class="n">0.4</span><span class="t2">)</span></span></div>
+<div class="ln"><span class="num">46</span><span class="code">    token = <span class="s2">&quot;Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.__PROTOTYPE_TOKEN__&quot;</span></span></div>
+<div class="ln"><span class="num">47</span><span class="code">    <span class="pr">print</span><span class="t2">(</span><span class="s2">&quot;[AUTH]  Token acquired. Expires in 3600s.</span><span class="e">\n</span><span class="s2">&quot;</span><span class="t2">)</span></span></div>
+<div class="ln"><span class="num">48</span><span class="code">    <span class="k">return</span> token</span></div>
+<div class="ln"><span class="num">49</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">50</span><span class="code">&nbsp;</span></div>
+<div class="ln cmt"><span class="num">51</span><span class="code"><span class="c"># — Fake Resource Catalog Fetch </span><span class="rule"></span></span></div>
+<div class="ln"><span class="num">52</span><span class="code">&nbsp;</span></div>
+<div class="ln"><span class="num">53</span><span class="code"><span class="k">def</span> <span class="f">fetch_provisioned_resources</span><span class="t2">(</span>token: <span class="t">str</span>, account_id: <span class="t">str</span><span class="t2">)</span> -&gt; <span class="t">list</span><span class="t2">[</span><span class="t">dict</span><span class="t2">[</span><span class="t">str</span>, Any<span class="t2">]]</span>:</span></div>
+<div class="ln"><span class="num">54</span><span class="code">    <span class="d">&quot;&quot;&quot;</span></span></div>
+<div class="ln"><span class="num">55</span><span class="code">    <span class="d">Pull all provisioned resource instances for the target account.</span></span></div>
+<div class="ln"><span class="num">56</span><span class="code">    <span class="d">(Prototype: returns a static mock payload.)</span></span></div>
+<div class="ln"><span class="num">57</span><span class="code">    <span class="d">&quot;&quot;&quot;</span></span></div>
+<div class="ln"><span class="num">58</span><span class="code">    <span class="pr">print</span><span class="t2">(</span><span class="k">f</span><span class="s2">&quot;[FETCH]  Querying resource catalog for account </span><span class="t2">{</span>account_id<span class="t2">}</span><span class="s2"> …&quot;</span><span class="t2">)</span></span></div>
+<div class="ln"><span class="num">59</span><span class="code">    time.<span class="v">sleep</span><span class="t2">(</span><span class="n">0.6</span><span class="t2">)</span></span></div>
+      </div>
+    </div>
+    <div class="ag">
+      <div class="hd"><span class="t1">AGENT MANAGER</span><span class="ic">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.500"/><circle cx="8" cy="8" r="6"/></svg>
+        <svg viewBox="0 0 16 16"><path d="M2 4l1.500 1.500L6 3M2 10l1.500 1.500L6 9M8 4h6M8 10h6"/></svg>
+        <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>
+        <span>···</span>
+        <svg viewBox="0 0 16 16"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg>
+        <svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13"/></svg>
+      </span></div>
+      <h2>Entitlement Automation Agent</h2>
+      <div class="msgs">
+        <p>That symbol looks great.</p>
+        <p>The color and shape combination will help the Entitlement Automation Agent stand out from your other three existing agents.</p>
+        <p>I’m going to build this agent. You should see the agent on your calendar in a few moments.</p>
+        <p style="margin-bottom:24px">Next, I’ll write a script based on: your instructions, the agent template, and the entitlement audit parameters. When I’m done, I’ll move our conversation to the <em>Explorer</em> page.</p>
+        <div class="wrote"><svg viewBox="0 0 16 16"><path d="M2 14l1-4 8-8 3 3-8 8zM9 4l3 3"/></svg><div>Wrote file<small>/Users/katie/bob/entitlement_audit.py</small></div><span class="ch">›</span></div>
+        <p class="typed" data-text="Do you want any help running through this scripts functions? I’m happy to provide clarity on how the script works."></p>
+        <p class="typed" data-text="If you’d like, we can also perform a dry run of either the script or deploying the agent. Let me know what you’d like to do next!"></p>
+      <div class="bub" id="bub" style="display:none"></div>
+        <p class="rep" id="rep" style="display:none" data-text="Yes, a dry run of the agent will test both the agent in the script. If the dry run is unsuccessful or not to your liking, I can help you make any changes."></p>
+        <p class="rep" id="rep2" style="display:none" data-text="I’m running your Entitlement Agent now. You’ll receive several notifications through IBM Bob (in app) and Slack as the agent runs."></p>
+        <p class="rep" id="rep3" style="display:none" data-text="At the end of the audit, you’ll receive a report in IBM Bob. From there, you can decide how to resolve any flagged problems."></p>
+      </div>
+      <div class="sp1"></div>
+      <div class="fin"><svg viewBox="0 0 24 24"><path d="M3 21l9-9M9 5l5-2 7 6-3 4-3-1-3 3-5-5 3-3z"/></svg><span id="fint">Finishing the last details...</span></div>
+      <div class="inp"><span class="ph">Follow up, steer, queue, or cancel.</span><span class="ut" data-text="I would like to perform a dry run of deploying the agent. Since the agent is connected to this script, won’t this test allow me to see both in action?"></span>
+        <span class="b1">+</span><span class="b2"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.500"/><path d="M8 5v3l2 1"/></svg></span><span class="stop"><i></i></span>
+      </div>
+      <div class="sb"></div>
+    </div>
+  </div>
+  <div class="st"><span>⤫</span><span>⊗ 0 &nbsp;⚠ 0</span><span>Bob Findings</span></div>
+</div>
+<div class="end-overlay" id="end-overlay">
+  <div class="end-card">
+    <h1>Thanks For Playing!</h1>
+    <h2>The engineer continues to build and manage agents.</h2>
+    <p>With the entitlement automation agent, the audit goes from taking 9 hours to less than 40 minutes!</p>
+    <button type="button" id="end-home">Return Home</button>
+  </div>
+</div>
+<div class="guide-frame" id="guide-frame"></div>
+<div class="guide-line" id="guide-line"></div>
+<div class="guide-callout" id="guide-callout">
+  <div class="guide-body" data-text="Let’s perform a dry run — but won’t the deployment run both the script and the agent ?&#10;&#10;Let’s ask for more information on that. The chatbot system allows users to ask questions about their agents at any time."></div>
+</div>
+<script>
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.typed'));
+  var ut=document.querySelector('.ut'),ph=document.querySelector('.ph');
+  var SEND_DELAY=2000; // ms after the message is typed
+  var RETURN_DELAY=2000; // ms after the last message before returning to index.html
+  var NEXT_DELAY=1000; // ms between the reply and the run message
+  var REPLY_DELAY=2000; // ms after the message is sent
+  var INPUT_DELAY=2000; // ms after the agent message finishes
+  var SPEED=16; // ms per character
+  var msgs=document.querySelector('.msgs'),sb=document.querySelector('.sb'),agEl=document.querySelector('.ag');
+  function toEnd(){
+    msgs.scrollTop=msgs.scrollHeight;
+    if(msgs.scrollHeight>msgs.clientHeight+1){
+      var h=Math.max(40,msgs.clientHeight*msgs.clientHeight/msgs.scrollHeight);
+      var top0=msgs.getBoundingClientRect().top-agEl.getBoundingClientRect().top;
+      sb.style.height=h+'px';
+      sb.style.top=(top0+msgs.scrollTop/(msgs.scrollHeight-msgs.clientHeight)*(msgs.clientHeight-h))+'px';
+    }
+  }
+  window.addEventListener('resize',toEnd);
+  function type(el,done){
+    var t=el.dataset.text,i=0;
+    el.classList.add('active');
+    (function step(){
+      if(i>=t.length){el.classList.remove('active');return done&&done();}
+      var c=t.charAt(i++);
+      el.textContent=t.slice(0,i);
+      toEnd();
+      setTimeout(step,SPEED);
+    })();
+  }
+  function run(n){
+    if(n<els.length) setTimeout(function(){type(els[n],function(){run(n+1);});},1000);
+    else setTimeout(function(){showGuide(startUser);},INPUT_DELAY);
+  }
+  // Guided callout pointing at the input box; click 1 starts typing (callout stays), click 2 dismisses it.
+  var typedDone=false,guideDone=false;
+  function proceed(){if(typedDone&&guideDone)setTimeout(send,SEND_DELAY);}
+  function showGuide(done){
+    var frame=document.getElementById('guide-frame'),line=document.getElementById('guide-line'),callout=document.getElementById('guide-callout');
+    var el=callout.querySelector('.guide-body'),text=el.getAttribute('data-text');
+    var r0=document.querySelector('.inp').getBoundingClientRect(),pad=3;
+    var r={left:r0.left-pad,top:r0.top-pad,width:r0.width+pad*2,height:r0.height+pad*2};
+    frame.style.cssText='display:block;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px';
+    line.style.display='block';callout.style.display='block';
+    el.innerHTML='<span class="typed2"></span><span class="rest"></span>';
+    el.querySelector('.rest').textContent=text;
+    var width=Math.max(280,Math.min(window.innerWidth*0.22,380));
+    callout.style.width=width+'px';
+    callout.style.left=Math.max(12,r.left-60-width)+'px';
+    var midY=r.top+r.height/2;
+    callout.style.top=(midY-callout.getBoundingClientRect().height/2)+'px';
+    var cr=callout.getBoundingClientRect(),x1=cr.right,x2=r.left+2;
+    var y1=Math.min(Math.max(midY,cr.top+20),cr.bottom-20),dx=x2-x1,dy=midY-y1;
+    line.style.left=x1+'px';line.style.top=(y1-2.5)+'px';
+    line.style.width=Math.sqrt(dx*dx+dy*dy)+'px';
+    line.style.transform='rotate('+Math.atan2(dy,dx)+'rad)';
+    var ci=0,gt=setInterval(function(){
+      ci++;
+      el.querySelector('.typed2').textContent=text.substring(0,ci);
+      el.querySelector('.rest').textContent=text.substring(ci);
+      if(ci>=text.length)clearInterval(gt);
+    },SPEED);
+    var clicks=0;
+    document.addEventListener('click',function onClick(e){
+      e.preventDefault();e.stopPropagation();
+      clicks++;
+      if(clicks===1){done();return;}
+      document.removeEventListener('click',onClick,true);
+      clearInterval(gt);
+      frame.style.display=line.style.display=callout.style.display='none';
+      guideDone=true;proceed();
+    },true);
+  }
+  function startUser(){ph.style.display='none';type(ut,function(){typedDone=true;proceed();});}
+  function send(){
+        var b=document.getElementById('bub');
+        b.textContent=ut.dataset.text;b.style.display='block';toEnd();
+        ut.textContent='';ph.style.display='';
+        document.getElementById('fint').textContent='Thinking...';
+        setTimeout(function(){
+          var r=document.getElementById('rep');
+          r.style.display='block';toEnd();
+          type(r,function(){
+            setTimeout(function(){
+              var r2=document.getElementById('rep2'),r3=document.getElementById('rep3');
+              r2.style.display='block';toEnd();
+              type(r2,function(){
+                setTimeout(function(){r3.style.display='block';toEnd();type(r3,function(){setTimeout(function(){document.getElementById('end-overlay').style.display='flex';},RETURN_DELAY);});},1000);
+              });
+            },NEXT_DELAY);
+          });
+        },REPLY_DELAY);
+  }
+  document.getElementById('end-home').addEventListener('click',function(){window.location.href='index.html';});
+  run(0);
+})();
+</script>
+</body>
+</html>

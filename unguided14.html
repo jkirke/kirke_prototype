@@ -1501,7 +1501,7 @@
             </div>
 
             <div class="assistant-bubble follow-up" id="typed-reply">
-              <p>In this case, your somewhat-strict agent will emphasize problems flagged with medium to high confidence.</p>
+              <p>In this case, your very-strict agent will emphasize problems flagged with medium to high confidence.</p>
               <p>A stricter agent would focus only on high confidence problems. A more lenient agent would emphasize all flagged problems, regardless of confidence. Remember, you can change the agent’s behavior at any time!</p>
               <p>Let’s continue discussing agent behaviors.</p>
             </div>
@@ -1750,7 +1750,7 @@
           j++;
           if (j >= items[i].text.length) { i++; j = 0; }
           layout();
-        }, 20);
+        }, 16);
       }
       var alertReplyItems = prepare(document.getElementById('alert-reply'));
 
@@ -1772,55 +1772,58 @@
 
       // Remaining steps run relative to when the second reply finishes typing.
       function runRemainingSteps() {
-        setTimeout(function () {
-          document.getElementById('two-questions').textContent = 'Two questions, then we\u2019ll finalize the agent details and build the script.';
-          document.getElementById('notify-section').style.display = 'block';
-          layout();
-        }, 2000);
-
-        setTimeout(function () {
-          document.getElementById('report-section').style.display = 'block';
-          document.getElementById('actions-continue').style.display = 'flex';
-          layout();
-        }, 4000);
-
-        setTimeout(function () {
-          document.querySelector('.status-indicator').style.visibility = 'hidden';
-          document.querySelector('.prompt-input').placeholder = 'Follow up, or start new task.';
-          var btn = document.querySelector('.prompt-stop-btn');
-          btn.className = 'prompt-send-btn';
-          btn.title = 'Send';
-          btn.disabled = true;
-          layout();
-        }, 5000);
-
-        // Wait 1 second, then check Slack under "How would you like to be notified?"
-        setTimeout(function () {
-          var notifySlack = document.getElementById('notify-slack');
-          if (notifySlack) notifySlack.checked = true;
-        }, 6000);
-
-        // Then check Bob (In App) in the same section
-        setTimeout(function () {
-          var notifyBob = document.getElementById('notify-bob');
-          if (notifyBob) notifyBob.checked = true;
-        }, 7000);
-
-        // Then check Email under "Where would you like to receive the audit report?"
-        setTimeout(function () {
-          var reportEmail = document.getElementById('report-email');
-          if (reportEmail) reportEmail.checked = true;
-        }, 8000);
-
-        // Then check Slack under "Where would you like to receive the audit report?"
-        setTimeout(function () {
-          var reportSlack = document.getElementById('report-slack');
-          if (reportSlack) reportSlack.checked = true;
-        }, 9000);
-
-        setTimeout(function () {
-          location.href = 'unguided15.html';
-        }, 10500);
+        // Each step runs after its own wait (in ms) following the previous step.
+        var steps = [
+          [2000, function () {
+            document.getElementById('two-questions').textContent = 'Two questions, then we\u2019ll finalize the agent details and build the script.';
+            document.getElementById('notify-section').style.display = 'block';
+            layout();
+          }],
+          [2000, function () {
+            document.getElementById('report-section').style.display = 'block';
+            document.getElementById('actions-continue').style.display = 'flex';
+            layout();
+          }],
+          [1000, function () {
+            document.querySelector('.status-indicator').style.visibility = 'hidden';
+            document.querySelector('.prompt-input').placeholder = 'Follow up, or start new task.';
+            var btn = document.querySelector('.prompt-stop-btn');
+            btn.className = 'prompt-send-btn';
+            btn.title = 'Send';
+            btn.disabled = true;
+            layout();
+          }],
+          // Check Slack under "How would you like to be notified?"
+          [1000, function () {
+            var notifySlack = document.getElementById('notify-slack');
+            if (notifySlack) notifySlack.checked = true;
+          }],
+          // Then check Bob (In App) in the same section
+          [1000, function () {
+            var notifyBob = document.getElementById('notify-bob');
+            if (notifyBob) notifyBob.checked = true;
+          }],
+          // Then check Email under "Where would you like to receive the audit report?"
+          [1000, function () {
+            var reportEmail = document.getElementById('report-email');
+            if (reportEmail) reportEmail.checked = true;
+          }],
+          // Then check Slack under "Where would you like to receive the audit report?"
+          [1000, function () {
+            var reportSlack = document.getElementById('report-slack');
+            if (reportSlack) reportSlack.checked = true;
+          }],
+          [2000, function () {
+            location.href = 'unguided15.html';
+          }]
+        ];
+        var s = 0;
+        function next() {
+          if (s >= steps.length) return;
+          var step = steps[s++];
+          setTimeout(function () { step[1](); next(); }, step[0]);
+        }
+        next();
       }
     })();
   </script>

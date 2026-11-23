@@ -1553,7 +1553,7 @@
 
       var paragraphs = document.querySelectorAll('#typed-reply p');
       var texts = [
-        'In this case, your somewhat-strict agent will emphasize problems flagged with medium to high confidence.',
+        'In this case, your very-strict agent will emphasize problems flagged with medium to high confidence.',
         'A stricter agent would focus only on high confidence problems. A more lenient agent would emphasize all flagged problems, regardless of confidence. Remember, you can change the agent\u2019s behavior at any time!',
         'Let\u2019s continue discussing agent behaviors.'
       ];
@@ -1567,7 +1567,7 @@
         c++;
         if (c === texts[p].length) { p++; c = 0; }
         layout();
-        setTimeout(type, 35);
+        setTimeout(type, 16);
       }
       setTimeout(type, 1000);
     })();

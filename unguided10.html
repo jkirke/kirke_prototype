@@ -1554,18 +1554,22 @@
       btn.disabled = true;
       var body = document.querySelector('.assistant-body');
       body.scrollTop = body.scrollHeight;
+      setTimeout(checkNext, 1000);
     }, 2000);
 
       var boxes = document.querySelectorAll('#behavior-list input[type="checkbox"]');
-      for (var k = 0; k < boxes.length - 1; k++) {
-        (function (box, delay) {
-          setTimeout(function () { box.checked = true; }, delay);
-        })(boxes[k], 3500 + k * 1500);
+      var k = 0;
+      function checkNext() {
+        if (k < boxes.length - 1) {
+          boxes[k].checked = true;
+          k++;
+          setTimeout(checkNext, 1000);
+        } else {
+          setTimeout(function () {
+            location.href = 'unguided11.html';
+          }, 2000);
+        }
       }
-
-      setTimeout(function () {
-        location.href = 'unguided11.html';
-      }, 10000);
     })();
 
   </script>

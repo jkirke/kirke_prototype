@@ -1559,47 +1559,55 @@
         items[i].el.textContent += items[i].text.charAt(j);
         j++;
         if (j >= items[i].text.length) { i++; j = 0; }
-      }, 20);
+      }, 16);
     })();
 
     function runSteps() {
-    setTimeout(function () {
-      document.getElementById('symbol-field').classList.add('open');
-      document.getElementById('symbol-picker').classList.add('open');
-    }, 2000);
+    // Each step runs after its own wait (in ms) following the previous step.
+    var steps = [
+      [2000, function () {
+        document.getElementById('symbol-field').classList.add('open');
+        document.getElementById('symbol-picker').classList.add('open');
+      }],
+      [2000, function () {
+        // Move selection to triangle (index 4)
+        var options = document.querySelectorAll('.symbol-option');
+        options.forEach(function (o) { o.classList.remove('selected'); });
+        options[4].classList.add('selected');
 
-    setTimeout(function () {
-      // Move selection to triangle (index 4)
-      var options = document.querySelectorAll('.symbol-option');
-      options.forEach(function (o) { o.classList.remove('selected'); });
-      options[4].classList.add('selected');
+        // Swap preview from circle to triangle
+        var preview = document.querySelector('.color-preview');
+        preview.style.borderRadius = '0';
+        preview.style.background = 'transparent';
+        preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#1a73e8"/></svg>';
+      }],
+      [1000, function () {
+        // Open Color dropdown
+        document.getElementById('color-field').classList.add('open');
+        document.getElementById('color-caret').innerHTML = '&#8681;';
+        document.getElementById('color-picker').classList.add('open');
+      }],
+      [1000, function () {
+        // Move selection to pink swatch (row 3, index 6 = overall index 22)
+        var swatches = document.querySelectorAll('.color-swatch');
+        swatches.forEach(function (s) { s.classList.remove('selected'); });
+        swatches[22].classList.add('selected');
 
-      // Swap preview from circle to triangle
-      var preview = document.querySelector('.color-preview');
-      preview.style.borderRadius = '0';
-      preview.style.background = 'transparent';
-      preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#1a73e8"/></svg>';
-    }, 4000);
+        // Update triangle preview to pink
+        var preview = document.querySelector('.color-preview');
+        preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#e056a0"/></svg>';
+      }],
+      [1000, buildStep]
+    ];
+    var s = 0;
+    function next() {
+      if (s >= steps.length) return;
+      var step = steps[s++];
+      setTimeout(function () { step[1](); next(); }, step[0]);
+    }
+    next();
 
-    setTimeout(function () {
-      // Open Color dropdown
-      document.getElementById('color-field').classList.add('open');
-      document.getElementById('color-caret').innerHTML = '&#8681;';
-      document.getElementById('color-picker').classList.add('open');
-    }, 5000);
-
-    setTimeout(function () {
-      // Move selection to pink swatch (row 3, index 6 = overall index 22)
-      var swatches = document.querySelectorAll('.color-swatch');
-      swatches.forEach(function (s) { s.classList.remove('selected'); });
-      swatches[22].classList.add('selected');
-
-      // Update triangle preview to pink
-      var preview = document.querySelector('.color-preview');
-      preview.innerHTML = '<svg viewBox="0 0 100 90" width="100" height="90" xmlns="http://www.w3.org/2000/svg"><polygon points="50,4 96,86 4,86" fill="#e056a0"/></svg>';
-    }, 6000);
-
-    setTimeout(function () {
+    function buildStep() {
       // Hide Build Agent button
       document.getElementById('build-agent-btn').style.display = 'none';
 
@@ -1621,7 +1629,7 @@
         buildItems[bi].el.textContent += buildItems[bi].text.charAt(bj);
         bj++;
         if (bj >= buildItems[bi].text.length) { bi++; bj = 0; }
-      }, 20);
+      }, 16);
 
       // Show "Building your agent..." status
       document.getElementById('building-status').style.visibility = 'visible';
@@ -1633,14 +1641,13 @@
       var btn = document.getElementById('prompt-action-btn');
       btn.className = 'prompt-stop-btn';
       btn.title = 'Stop';
-    }, 7000);
+    }
 
     // Remaining steps run relative to when the build response finishes typing.
     function runBuildSteps() {
       setTimeout(function () {
         // Add new agent to sidebar ACTIVE list
         document.getElementById('new-agent-item').style.display = 'flex';
-      }, 1000);
 
       setTimeout(function () {
         // Show pink triangle on calendar cell 26
@@ -1648,7 +1655,6 @@
 
         // Update status text
         document.querySelector('#building-status span').textContent = 'Scheduling your agent...';
-      }, 2000);
 
       setTimeout(function () {
         // Show script follow-up message and copy icon, slow-typing the message
@@ -1687,8 +1693,10 @@
               }, 2000);
             }, 1000);
           }
-        }, 20);
-      }, 3000);
+        }, 16);
+      }, 1000);
+      }, 1000);
+      }, 1000);
     }
     }
   </script>
