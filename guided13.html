@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entitlement Automation Agent | IBM Bob</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +15,7 @@
       height: 100%;
       width: 100%;
       overflow: hidden;
-      font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: Arial, sans-serif;
       background: #ffffff;
       color: #000000;
       -webkit-font-smoothing: antialiased;
@@ -782,6 +779,10 @@
       height: 16px;
       margin-top: 2px;
       flex-shrink: 0;
+    }
+
+    .scope-option input[type="checkbox"][checked] {
+      pointer-events: none;
     }
 
     .scope-option strong {
@@ -1690,9 +1691,8 @@
           <div class="assistant-footer">
 
             <div class="status-indicator">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9.5 2.5l4 4-1.5 1.5-1-1-5.5 5.5a1.4 1.4 0 0 1-2-2L9 5 8 4z"/>
-                <path d="M2 14h5"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21l9-9M9 5l5-2 7 6-3 4-3-1-3 3-5-5 3-3z"/>
               </svg>
               <span>Generating notification and reporting options...</span>
             </div>
@@ -1953,31 +1953,29 @@
       var notifyBob = document.getElementById('notify-bob');
       var reportEmail = document.getElementById('report-email');
       var reportSlack = document.getElementById('report-slack');
-      var clicks = 0;
+      function onNotifyChange() {
+        if (!guideVisible || guideStep !== 1) return;
+        if (notifySlack.checked && notifyBob.checked) {
+          dismissGuide();
+          setTimeout(function () {
+            guideStep = 2;
+            showGuide();
+          }, 1000);
+        }
+      }
 
-      document.addEventListener('click', function (e) {
-        if (!guideVisible) return;
-        if (e.target.closest('.activity-icon') || e.target.closest('.nav-arrow') || e.target.closest('.assistant-icon-btn')) return;
-        e.preventDefault();
-        e.stopPropagation();
-
-        clicks++;
-        if (clicks === 1) {
-          if (notifySlack) notifySlack.checked = true;
-        } else if (clicks === 2) {
-          if (notifyBob) notifyBob.checked = true;
-        } else if (clicks === 3) {
-          guideStep = 2;
-          showGuide();
-        } else if (clicks === 4) {
-          if (reportEmail) reportEmail.checked = true;
-        } else if (clicks === 5) {
-          if (reportSlack) reportSlack.checked = true;
-        } else if (clicks === 6) {
+      function onReportChange() {
+        if (!guideVisible || guideStep !== 2) return;
+        if (reportEmail.checked && reportSlack.checked) {
           dismissGuide();
           if (continueBtn) continueBtn.disabled = false;
         }
-      }, true);
+      }
+
+      notifySlack.addEventListener('change', onNotifyChange);
+      notifyBob.addEventListener('change', onNotifyChange);
+      reportEmail.addEventListener('change', onReportChange);
+      reportSlack.addEventListener('change', onReportChange);
     })();
   </script>
 
